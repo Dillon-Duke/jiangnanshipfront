@@ -55,7 +55,7 @@
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/sys/menu/table'),
+          url: this.$http.adornUrl('/sys/menu/page'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
@@ -79,7 +79,6 @@
               if (idx !== -1) {
                 data.menuIdList.splice(idx, data.menuIdList.length - idx)
               }
-              console.log(data.menuIdList)
               this.$refs.menuListTree.setCheckedKeys(data.menuIdList)
             })
           }

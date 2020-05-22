@@ -30,6 +30,15 @@
           <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
+       <el-form-item size="mini" label="部门">
+        <el-tree
+          :data="menuList"
+          :props="menuListTreeProps"
+          node-key="menuId"
+          ref="menuListTree"
+          show-checkbox>
+        </el-tree>
+      </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
         <el-radio-group v-model="dataForm.status">
           <el-radio :label="0">禁用</el-radio>

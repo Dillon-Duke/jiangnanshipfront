@@ -93,10 +93,8 @@ export default {
               'imageCode': this.dataForm.captcha
             })
           }).then(({ data }) => {
-            console.log(data)
             this.$cookie.set('Authorization', data)
             this.$router.replace({ name: 'home' })
-            alert(data)
           }).catch(() => {
             this.getCaptcha()
           })

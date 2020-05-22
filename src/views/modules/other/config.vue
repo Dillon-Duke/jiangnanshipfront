@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-car">
+  <div class="mod-config">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,12 +11,10 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('sys:car:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
 
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('sys:car:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
@@ -25,14 +23,12 @@
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('sys:car:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+                   @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
 
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('sys:car:delete')"
-                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
+                   @click.stop="deleteHandle(scope.row.id)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -43,8 +39,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/sys/car'
-import AddOrUpdate from './car-add-or-update'
+import { tableOption } from '@/crud/sys/config'
+import AddOrUpdate from './config-add-or-update'
 export default {
   data () {
     return {
@@ -68,7 +64,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/car/page'),
+        url: this.$http.adornUrl('/other/config/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -85,7 +81,6 @@ export default {
         this.dataListLoading = false
       })
     },
-   
     // 条件查询
     searchChange (params) {
       this.getDataList(this.page, params)
@@ -103,18 +98,18 @@ export default {
     },
     // 删除
     deleteHandle (id) {
-      var userIds = id ? [id] : this.dataListSelections.map(item => {
-        return item.userId
+      var ids = id ? [id] : this.dataListSelections.map(item => {
+        return item.id
       })
-      this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/sys/user'),
+          url: this.$http.adornUrl('/sys/config'),
           method: 'delete',
-          data: this.$http.adornData(userIds, false)
+          data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

@@ -106,7 +106,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/menu/table'),
+        url: this.$http.adornUrl('/sys/menu/page'),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({ data }) => {

@@ -1,64 +1,53 @@
 <template>
-  <div class="mod-category">
+  <div class="mod-menu">
     <el-form :inline="true"
              :model="dataForm">
       <el-form-item>
-        <el-button v-if="isAuth('prod:category:save')"
+        <el-button v-if="isAuth('sys:dept:save')"
                    type="primary"
-                   icon="el-icon-plus"
-                   size="small"
                    @click="addOrUpdateHandle()">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="dataList"
               border
-              row-key="categoryId"
-              style="width: 100%;">
-
-      <el-table-column prop="categoryName"
-                       header-align="center"
-                       treeKey="categoryId"
-                       width="150"
-                       label="分类名称">
+              style="width: 100%;"
+              row-key="deptId">
+      <el-table-column prop="deptName"
+                       align="center"
+                       treeKey="deptId"
+                       width="200"
+                       label="部门名称">
       </el-table-column>
-      <el-table-column prop="pic"
+      <el-table-column prop="deptCode"
+                       align="center"
+                       width="200"
+                       label="部门编号">
+      </el-table-column>
+      <el-table-column prop="remark"
                        header-align="center"
                        align="center"
-                       label="图片">
-        <template slot-scope="scope">
-          <img :src="resourcesUrl + scope.row.pic " />
-        </template>
+                       width="200"
+                       label="备注">
       </el-table-column>
-      <el-table-column prop="status"
+      <el-table-column prop="createDate"
                        header-align="center"
                        align="center"
-                       label="状态">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0"
-                  size="small"
-                  type="danger">下线</el-tag>
-          <el-tag v-else
-                  size="small">正常</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="seq"
-                       header-align="center"
-                       align="center"
-                       label="排序号">
+                       width="200"
+                       label="创建时间">
       </el-table-column>
       <el-table-column fixed="right"
                        header-align="center"
                        align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('prod:category:update')"
-                     type="primary"
+          <el-button v-if="isAuth('sys:dept:update')"
+                     type="text"
                      size="small"
-                     @click="addOrUpdateHandle(scope.row.categoryId)">修改</el-button>
-          <el-button v-if="isAuth('prod:category:delete')"
-                     type="danger"
+                     @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
+          <el-button v-if="isAuth('sys:dept:delete')"
+                     type="text"
                      size="small"
-                     @click="deleteHandle(scope.row.categoryId)">删除</el-button>
+                     @click="deleteHandle(scope.row.menuId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,17 +59,15 @@
 </template>
 
 <script>
-import AddOrUpdate from './category-add-or-update'
+import AddOrUpdate from './dept-add-or-update'
 import { treeDataTranslate } from '@/utils'
-
 export default {
   data () {
     return {
       dataForm: {},
       dataList: [],
       dataListLoading: false,
-      addOrUpdateVisible: false,
-      resourcesUrl: window.SITE_CONFIG.resourcesUrl
+      addOrUpdateVisible: false
     }
   },
   components: {
@@ -94,11 +81,11 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/prod/category/table'),
+        url: this.$http.adornUrl('/sys/dept/page'),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({ data }) => {
-        this.dataList = treeDataTranslate(data, 'categoryId', 'parentId')
+        this.dataList = treeDataTranslate(data, 'deptId')
         this.dataListLoading = false
       })
     },
@@ -117,7 +104,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl(`/prod/category/${id}`),
+          url: this.$http.adornUrl(`/sys/dept/${id}`),
           method: 'delete',
           data: this.$http.adornData()
         }).then(({ data }) => {
@@ -135,11 +122,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.mod-category {
-  img {
-    height: 80px;
-    width: 200px;
-  }
-}
-</style>
