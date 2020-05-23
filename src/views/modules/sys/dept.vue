@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-menu">
+  <div class="mod-dept">
     <el-form :inline="true"
              :model="dataForm">
       <el-form-item>
@@ -43,11 +43,11 @@
           <el-button v-if="isAuth('sys:dept:update')"
                      type="text"
                      size="small"
-                     @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
+                     @click="addOrUpdateHandle(scope.row.deptId)">修改</el-button>
           <el-button v-if="isAuth('sys:dept:delete')"
                      type="text"
                      size="small"
-                     @click="deleteHandle(scope.row.menuId)">删除</el-button>
+                     @click="deleteHandle(scope.row.deptId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

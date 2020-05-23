@@ -22,7 +22,7 @@
       <el-form-item label="车辆高" prop="carHeight">
         <el-input v-model="dataForm.carHeight" placeholder="车辆高"></el-input>
       </el-form-item>
-      <el-form-item label="车辆图片" prop="sourcePhoto">
+      <el-form-item label="车辆图片" prop="carPhoto">
         <el-upload
           class="upload-demo"
           action="#"
@@ -96,13 +96,11 @@
         alert('一次最多只能上传一张图片')
       },
       onSuccess (response, file, fileList) {
-        debugger
         this.$http({
           url: this.$http.adornUrl(`/file/upload`),
           method: 'post',
           params: file
         }).then((data) => {
-          debugger
           this.dataForm.sourcePhoto = data.sourcePhoto
         })
       },

@@ -11,12 +11,12 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('sys:car:save')"
+                   v-if="isAuth('car:car:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
 
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('sys:car:delete')"
+                   v-if="isAuth('car:car:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
@@ -25,13 +25,13 @@
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('sys:car:update')"
+                   v-if="isAuth('car:car:update')"
                    @click.stop="addOrUpdateHandle(scope.row.carId)">编辑</el-button>
 
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('sys:car:delete')"
+                   v-if="isAuth('car:car:delete')"
                    @click.stop="deleteHandle(scope.row.carId)">删除</el-button>
       </template>
     </avue-crud>
