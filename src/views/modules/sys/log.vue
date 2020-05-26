@@ -34,7 +34,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/other/log/page'),
+        url: this.$http.adornUrl('/sys/log/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(

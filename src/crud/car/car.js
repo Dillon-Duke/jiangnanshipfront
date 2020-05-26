@@ -38,7 +38,10 @@ export const tableOption = {
     prop: 'carHeight'
   }, {
     label: '车辆图片',
-    value: 'http://129.204.74.133:5198/group1/M00/00/00/rBAAC17Fzs6AViJjAAKhM5-U6lk939.jpg'
+    prop: 'sourcePhoto',
+    type: 'upload',
+    width: 100,
+    listType: 'picture-img'
   }, {
     label: '空车重量',
     prop: 'emptyWeight'

@@ -102,7 +102,7 @@ export default {
       })
     },
     // 删除
-    deleteHandle (id) {
+    deleteHandle (id, sourcePhoto) {
       var carIds = id ? [id] : this.dataListSelections.map(item => {
         return item.carId
       })
@@ -112,7 +112,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/sys/car'),
+          url: this.$http.adornUrl('/car/car'),
           method: 'delete',
           data: this.$http.adornData(carIds, false)
         }).then(({ data }) => {

@@ -22,16 +22,9 @@
       <el-form-item label="车辆高" prop="carHeight">
         <el-input v-model="dataForm.carHeight" placeholder="车辆高"></el-input>
       </el-form-item>
-      <el-form-item label="车辆图片" prop="carPhoto">
-        <el-upload
-          class="upload-demo"
-          action="#"
-          list-type="picture"
-          multiple
-          :limit="1"
-          :on-exceed="handleExceed"
-          :on-success="onSuccess">
-          <el-button size="small" type="primary">选择图片</el-button>
+      <el-form-item label="车辆图片" prop="sourcePhoto">
+        <el-upload ref="imgUpload" :on-success="onSuccess" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" :action="upLoadUrl">
+          <el-button type="primary">上传图片</el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="空车重量" prop="emptyWeight">
@@ -58,8 +51,10 @@
 
 <script>
   export default {
+    name: 'imgUpload',
     data () {
       return {
+        upLoadUrl: '/proxyApi/file/upload',
         visible: false,
         dataForm: {
           id: 0,
@@ -92,17 +87,9 @@
       }
     },
     methods: {
-      handleExceed (files, fileList) {
-        alert('一次最多只能上传一张图片')
-      },
       onSuccess (response, file, fileList) {
-        this.$http({
-          url: this.$http.adornUrl(`/file/upload`),
-          method: 'post',
-          params: file
-        }).then((data) => {
-          this.dataForm.sourcePhoto = data.sourcePhoto
-        })
+        this.dataForm.carPhoto = response.filename
+        this.dataForm.sourcePhoto = response.fdfsUrl
       },
       init (id) {
         var ids = this.dataForm.id = id || 0
@@ -111,7 +98,7 @@
           this.$refs.dataForm.resetFields()
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/car/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/car/car/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
@@ -135,7 +122,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/car`),
+              url: this.$http.adornUrl(`/car/car`),
               method: this.dataForm.id ? 'put' : 'post',
               data: this.$http.adornData({
                 'carId': this.dataForm.id || undefined,

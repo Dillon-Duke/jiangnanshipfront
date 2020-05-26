@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-user">
+  <div class="mod-config">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -8,38 +8,29 @@
                @selection-change="selectionChange"
                @on-load="getDataList">
       <template slot="menuLeft">
+        <el-button type="primary"
+                   icon="el-icon-plus"
+                   size="small"
+                   @click.stop="addOrUpdateHandle()">新增</el-button>
+
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('admin:user:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-
-      <template slot-scope="scope"
-                slot="status">
-        <el-tag v-if="scope.row.status === 0"
-                size="small"
-                type="danger">禁用</el-tag>
-        <el-tag v-else
-                size="small">正常</el-tag>
-      </template>
-
       <template slot-scope="scope"
                 slot="menu">
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('admin:user:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+                   @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
 
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('admin:user:delete')"
-                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
+                   @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
       </template>
     </avue-crud>
-
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible"
                    ref="addOrUpdate"
@@ -48,8 +39,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/user/user'
-import AddOrUpdate from './user-add-or-update'
+import { tableOption } from '@/crud/car/config'
+import AddOrUpdate from './config-add-or-update'
 export default {
   data () {
     return {
@@ -73,7 +64,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/admin/user/page'),
+        url: this.$http.adornUrl('/car/config/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -90,6 +81,14 @@ export default {
         this.dataListLoading = false
       })
     },
+    // 条件查询
+    searchChange (params) {
+      this.getDataList(this.page, params)
+    },
+    // 多选变化
+    selectionChange (val) {
+      this.dataListSelections = val
+    },
     // 新增 / 修改
     addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true
@@ -100,38 +99,28 @@ export default {
     // 删除
     deleteHandle (id) {
       var ids = id ? [id] : this.dataListSelections.map(item => {
-        return item.userId
+        return item.id
       })
-      this.$confirm(`确定进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          this.$http({
-            url: this.$http.adornUrl('/admin/user'),
-            method: 'delete',
-            data: this.$http.adornData(ids, false)
-          }).then(({ data }) => {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.getDataList(this.page)
-              }
-            })
+      }).then(() => {
+        this.$http({
+          url: this.$http.adornUrl('/car/config'),
+          method: 'delete',
+          data: this.$http.adornData(ids, false)
+        }).then(({ data }) => {
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.getDataList()
+            }
           })
         })
-        .catch(() => { })
-    },
-    // 条件查询
-    searchChange (params) {
-      this.getDataList(this.page, params)
-    },
-    // 多选变化
-    selectionChange (val) {
-      this.dataListSelections = val
+      }).catch(() => { })
     }
   }
 }

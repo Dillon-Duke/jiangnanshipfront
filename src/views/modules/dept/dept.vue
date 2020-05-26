@@ -3,7 +3,7 @@
     <el-form :inline="true"
              :model="dataForm">
       <el-form-item>
-        <el-button v-if="isAuth('sys:dept:save')"
+        <el-button v-if="isAuth('dept:dept:save')"
                    type="primary"
                    @click="addOrUpdateHandle()">新增</el-button>
       </el-form-item>
@@ -40,11 +40,11 @@
                        align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:dept:update')"
+          <el-button v-if="isAuth('dept:dept:update')"
                      type="text"
                      size="small"
                      @click="addOrUpdateHandle(scope.row.deptId)">修改</el-button>
-          <el-button v-if="isAuth('sys:dept:delete')"
+          <el-button v-if="isAuth('dept:dept:delete')"
                      type="text"
                      size="small"
                      @click="deleteHandle(scope.row.deptId)">删除</el-button>
@@ -81,7 +81,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/dept/page'),
+        url: this.$http.adornUrl('/dept/dept/page'),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({ data }) => {
@@ -104,7 +104,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl(`/sys/dept/${id}`),
+          url: this.$http.adornUrl(`/dept/dept/${id}`),
           method: 'delete',
           data: this.$http.adornData()
         }).then(({ data }) => {
