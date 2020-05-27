@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-config">
+  <div class="mod-role">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,24 +11,29 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
+                   v-if="isAuth('dept:role:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
 
         <el-button type="danger"
                    @click="deleteHandle()"
+                   v-if="isAuth('dept:role:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
+
       <template slot-scope="scope"
                 slot="menu">
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
+                   v-if="isAuth('dept:role:update')"
+                   @click.stop="addOrUpdateHandle(scope.row.roleId)">编辑</el-button>
 
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
+                   v-if="isAuth('dept:role:delete')"
+                   @click.stop="deleteHandle(scope.row.roleId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -39,8 +44,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/config'
-import AddOrUpdate from './config-add-or-update'
+import { tableOption } from '@/crud/dept/role'
+import AddOrUpdate from './role-add-or-update'
 export default {
   data () {
     return {
@@ -64,7 +69,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/config/page'),
+        url: this.$http.adornUrl('/dept/role/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -90,24 +95,24 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (confId) {
+    addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(confId)
+        this.$refs.addOrUpdate.init(id)
       })
     },
     // 删除
-    deleteHandle (confId) {
-      var ids = confId ? [confId] : this.dataListSelections.map(item => {
-        return item.confId
+    deleteHandle (id) {
+      var ids = id ? [id] : this.dataListSelections.map(item => {
+        return item.roleId
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${confId ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/config'),
+          url: this.$http.adornUrl('/dept/role'),
           method: 'delete',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {

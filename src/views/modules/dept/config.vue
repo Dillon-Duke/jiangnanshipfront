@@ -8,24 +8,28 @@
                @selection-change="selectionChange"
                @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
+        <el-button v-if="isAuth('dept:config:save')"
+                   type="primary"
                    icon="el-icon-plus"
                    size="small"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
 
-        <el-button type="danger"
+        <el-button v-if="isAuth('dept:config:delete')"
+                   type="danger"
                    @click="deleteHandle()"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
       <template slot-scope="scope"
                 slot="menu">
-        <el-button type="primary"
+        <el-button v-if="isAuth('dept:config:update')"
+                   type="primary"
                    icon="el-icon-edit"
                    size="small"
                    @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
 
-        <el-button type="danger"
+        <el-button v-if="isAuth('dept:config:delete')"
+                   type="danger"
                    icon="el-icon-delete"
                    size="small"
                    @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
@@ -39,7 +43,7 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/config'
+import { tableOption } from '@/crud/dept/config'
 import AddOrUpdate from './config-add-or-update'
 export default {
   data () {
@@ -64,7 +68,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/config/page'),
+        url: this.$http.adornUrl('/dept/config/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -107,7 +111,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/config'),
+          url: this.$http.adornUrl('/dept/config'),
           method: 'delete',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
