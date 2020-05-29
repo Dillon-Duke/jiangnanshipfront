@@ -18,11 +18,11 @@ export const tableOption = {
     value: 'value'
   },
   column: [{
-    label: '参数名',
+    label: '权限名称',
     prop: 'paramKey',
     search: true
   }, {
-    label: '参数值',
+    label: '权限类型',
     prop: 'paramValue'
   }, {
     label: '备注',

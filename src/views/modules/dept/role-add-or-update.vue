@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="权限" size="mini" prop="powerIdList">
         <el-checkbox-group v-model="dataForm.powerIdList">
-          <el-checkbox v-for="role in powerList" :key="role.confId" :label="role.confId">{{ role.paramKey }}&nbsp;&nbsp;{{ role.paramValue }}</el-checkbox>
+          <el-checkbox v-for="role in powerList" :key="role.confId" :label="role.confId">{{ role.paramKey }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
     </el-form>
