@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.carId ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
@@ -23,8 +23,23 @@
         <el-input v-model="dataForm.carHeight" placeholder="车辆高"></el-input>
       </el-form-item>
       <el-form-item label="车辆图片" prop="sourcePhoto">
-        <el-upload ref="imgUpload" :on-success="onSuccess" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" :action="upLoadUrl">
-          <el-button type="primary">上传图片</el-button>
+        <el-upload
+          ref="imgUpload"
+          :limit=limitNum
+          :on-exceed="exceedFile"
+          :on-success="onSuccess"
+          :on-remove="handleRemove"
+          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+          :action="upLoadUrl"
+          list-type="picture-card"
+          >
+          <!-- list-type="picture-card" -->
+          <ul v-for="index in dataForm.sourcePhoto" :key="index" class="el-upload-list el-upload-list--picture-card" style="display: inline-block">
+            <li tabindex="0" class="el-upload-list__item is-success">
+              <img  width="100%" :src="index" alt="暂未图片" class="el-upload-list__item-thumbnail">
+            </li>
+          </ul> 
+          <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="空车重量" prop="emptyWeight">
@@ -43,7 +58,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="dataFormCancle()">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
@@ -54,18 +69,19 @@
     name: 'imgUpload',
     data () {
       return {
+        limitNum: 3,
         upLoadUrl: '/proxyApi/file/upload',
         visible: false,
         dataForm: {
-          id: 0,
+          carId: 0,
           carName: '',
           carNumber: '',
           carPlate: '',
           carLength: '',
           carWight: '',
           carHeight: '',
-          carPhoto: '',
-          sourcePhoto: '',
+          carPhoto: [],
+          sourcePhoto: [],
           emptyWeight: '',
           fullWeight: '',
           carState: 1
@@ -87,29 +103,37 @@
       }
     },
     methods: {
-      onSuccess (response, file, fileList) {
-        this.dataForm.carPhoto = response.filename
-        this.dataForm.sourcePhoto = response.fdfsUrl
+      exceedFile (files, fileList) {
+        this.$notify.warning({
+          title: '警告',
+          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
+        })
       },
-      init (id) {
-        var ids = this.dataForm.id = id || 0
+      onSuccess (response, file, fileList) {
+        this.dataForm.carPhoto.push(response.filename)  // 将文件id放在数组中
+        this.dataForm.sourcePhoto.push(response.fdfsUrl) // 将文件id放在数组中
+      },
+      init (carId) {
+        var ids = this.dataForm.carId = carId || 0
         this.visible = true
         this.$nextTick(() => {
           this.$refs.dataForm.resetFields()
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/car/car/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/car/car/info/${this.dataForm.carId}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
+              this.dataForm.carId = data.carId
               this.dataForm.carName = data.carName
               this.dataForm.carNumber = data.carNumber
               this.dataForm.carPlate = data.carPlate
               this.dataForm.carLength = data.carLength
               this.dataForm.carWight = data.carWight
               this.dataForm.carHeight = data.carHeight
-              this.dataForm.carPhoto = data.carPhoto
-              this.dataForm.sourcePhoto = data.sourcePhoto
+              let reg = new RegExp('"', 'g') // g代表全部
+              this.dataForm.carPhoto = JSON.stringify(data.sourcePhoto).replace(reg, '').split(';') // 字符串转数组
+              this.dataForm.sourcePhoto = JSON.stringify(data.sourcePhoto).replace(reg, '').split(';') // 字符串转数组
               this.dataForm.emptyWeight = data.emptyWeight
               this.dataForm.fullWeight = data.fullWeight
               this.dataForm.carState = data.carState
@@ -123,17 +147,17 @@
           if (valid) {
             this.$http({
               url: this.$http.adornUrl(`/car/car`),
-              method: this.dataForm.id ? 'put' : 'post',
+              method: this.dataForm.carId ? 'put' : 'post',
               data: this.$http.adornData({
-                'carId': this.dataForm.id || undefined,
+                'carId': this.dataForm.carId || undefined,
                 'carName': this.dataForm.carName,
                 'carNumber': this.dataForm.carNumber,
                 'carPlate': this.dataForm.carPlate,
                 'carLength': this.dataForm.carLength,
                 'carWight': this.dataForm.carWight,
                 'carHeight': this.dataForm.carHeight,
-                'carPhoto': this.dataForm.carPhoto,
-                'sourcePhoto': this.dataForm.sourcePhoto,
+                'carPhoto': this.dataForm.carPhoto.join(';'),  // 数组转string
+                'sourcePhoto': this.dataForm.sourcePhoto.join(';'), // 数组转string
                 'emptyWeight': this.dataForm.emptyWeight,
                 'fullWeight': this.dataForm.fullWeight,
                 'carState': this.dataForm.carState
@@ -151,6 +175,39 @@
             })
           }
         })
+      },
+      // 表单不提交
+      dataFormCancle () {
+        var imageUrls = this.dataForm.sourcePhoto
+        var imageUrl = imageUrls ? [imageUrls] : this.dataListSelections.map(item => {
+          return item.imageUrl
+        })
+        if (imageUrl) {
+          this.$http({
+            url: this.$http.adornUrl('/file/delete'),
+            method: 'delete',
+            data: this.$http.adornData(imageUrl, false)
+          }).then(() => {
+            this.visible = false
+            this.$emit('refreshDataList')
+          }).catch(({res}) => {
+            console.log(res)
+          })
+        }
+      },
+      // 图片删除
+      handleRemove (file, fileList) {
+        var fileurl = file.response.fdfsUrl
+        var files = fileurl ? [fileurl] : this.dataListSelections.map(item => {
+          return item.files
+        })
+        if (files) {
+          this.$http({
+            url: this.$http.adornUrl('/file/delete'),
+            method: 'delete',
+            data: this.$http.adornData(files, false)
+          })
+        }
       }
     }
   }

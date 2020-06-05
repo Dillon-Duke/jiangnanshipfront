@@ -38,7 +38,8 @@ export const tableOption = {
     prop: 'age'
   }, {
     label: '手机号码',
-    prop: 'phone'
+    prop: 'phone',
+    search: true
   }, {
     label: '工号',
     prop: 'jobNum'

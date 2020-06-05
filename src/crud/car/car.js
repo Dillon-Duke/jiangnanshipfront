@@ -5,7 +5,7 @@ export const tableOption = {
   indexLabel: '序号',
   stripe: true,
   menuAlign: 'center',
-  menuWidth: 350,
+  menuWidth: 250,
   align: 'center',
   refreshBtn: true,
   searchSize: 'mini',
@@ -38,10 +38,10 @@ export const tableOption = {
     prop: 'carHeight'
   }, {
     label: '车辆图片',
-    prop: 'sourcePhoto',
+    prop: 'sourcePhoto.',
     type: 'upload',
     width: 100,
-    listType: 'picture-img'
+    listType: 'picture-card'
   }, {
     label: '空车重量',
     prop: 'emptyWeight'

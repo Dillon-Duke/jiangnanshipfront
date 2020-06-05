@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-car">
+  <div class="mod-config">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -8,44 +8,43 @@
                @selection-change="selectionChange"
                @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
+        <el-button v-if="isAuth('sys:config:save')"
+                   type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('car:car:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
 
-        <el-button type="danger"
+        <el-button v-if="isAuth('sys:config:delete')"
+                   type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('car:car:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
       <template slot-scope="scope"
                 slot="menu">
-        <el-button type="primary"
+        <el-button v-if="isAuth('sys:config:update')"
+                   type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('car:car:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.carId)">编辑</el-button>
+                   @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
 
-        <el-button type="danger"
+        <el-button v-if="isAuth('sys:config:delete')"
+                   type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('car:car:delete')"
-                   @click.stop="deleteHandle(scope.row)">删除</el-button>
+                   @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible"
                    ref="addOrUpdate"
-                   @refreshDataList="getDataList">
-    </add-or-update>
+                   @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/car'
-import AddOrUpdate from './car-add-or-update'
+import { tableOption } from '@/crud/sys/config'
+import AddOrUpdate from './config-add-or-update'
 export default {
   data () {
     return {
@@ -69,7 +68,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/car/page'),
+        url: this.$http.adornUrl('/sys/config/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -95,30 +94,26 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (id) {
+    addOrUpdateHandle (confId) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id)
+        this.$refs.addOrUpdate.init(confId)
       })
     },
     // 删除
-    deleteHandle (row) {
-      var id = row.carId
-      var carIds = id ? [id] : this.dataListSelections.map(item => {
-        return item.carId
+    deleteHandle (confId) {
+      var ids = confId ? [confId] : this.dataListSelections.map(item => {
+        return item.confId
       })
-      var rows = row ? [row] : this.dataListSelections.map(item => {
-        return item.row
-      })
-      this.$confirm(`确定对[id=${carIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${ids.join(',')}]进行[${confId ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/car'),
+          url: this.$http.adornUrl('/sys/config'),
           method: 'delete',
-          data: this.$http.adornData(rows, false)
+          data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',
@@ -129,7 +124,7 @@ export default {
             }
           })
         })
-      })
+      }).catch(() => { })
     }
   }
 }

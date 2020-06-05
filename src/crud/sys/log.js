@@ -1,15 +1,11 @@
 export const tableOption = {
   border: true,
   menu: false, // 移除操作栏
-  selection: true,
   index: false,
-  indexLabel: '序号',
   stripe: true,
   menuAlign: 'center',
-  menuWidth: 350,
   align: 'center',
   refreshBtn: true,
-  searchSize: 'mini',
   addBtn: false,
   editBtn: false,
   delBtn: false,

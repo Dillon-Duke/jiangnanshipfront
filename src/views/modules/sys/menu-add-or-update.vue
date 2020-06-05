@@ -12,7 +12,7 @@
       <el-form-item :label="dataForm.typeList[dataForm.type] + '名称'" prop="name">
         <el-input v-model="dataForm.name" :placeholder="dataForm.typeList[dataForm.type] + '名称'"></el-input>
       </el-form-item>
-      <el-form-item label="上级菜单">
+      <el-form-item v-if="dataForm.type !== 0" label="上级菜单">
         <el-cascader
           expand-trigger="hover"
           :options="menuList"
@@ -31,7 +31,7 @@
       <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="orderNum">
         <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" label="排序号"></el-input-number>
       </el-form-item>
-      <el-form-item v-if="dataForm.type !== 2" label="菜单图标" prop="icon">
+      <el-form-item v-if="dataForm.type !== 2" label="图标" prop="icon">
         <el-row>
           <el-col :span="22">
             <el-popover

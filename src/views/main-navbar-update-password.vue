@@ -7,11 +7,11 @@
       <el-form-item label="账号">
         <span>{{ userName }}</span>
       </el-form-item>
-      <el-form-item label="原密码" prop="password">
-        <el-input type="password" v-model="dataForm.password"></el-input>
+      <el-form-item label="原密码" prop="credentials">
+        <el-input type="password" v-model="dataForm.credentials"></el-input>
       </el-form-item>
-      <el-form-item label="新密码" prop="newPassword">
-        <el-input type="password" v-model="dataForm.newPassword"></el-input>
+      <el-form-item label="新密码" prop="newCredentials">
+        <el-input type="password" v-model="dataForm.newCredentials"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="dataForm.confirmPassword"></el-input>
@@ -29,7 +29,7 @@
   export default {
     data () {
       var validateConfirmPassword = (rule, value, callback) => {
-        if (this.dataForm.newPassword !== value) {
+        if (this.dataForm.newCredentials !== value) {
           callback(new Error('确认密码与新密码不一致'))
         } else {
           callback()
@@ -38,15 +38,15 @@
       return {
         visible: false,
         dataForm: {
-          password: '',
-          newPassword: '',
+          credentials: '',
+          newCredentials: '',
           confirmPassword: ''
         },
         dataRule: {
-          password: [
+          credentials: [
             { required: true, message: '原密码不能为空', trigger: 'blur' }
           ],
-          newPassword: [
+          newCredentials: [
             { required: true, message: '新密码不能为空', trigger: 'blur' }
           ],
           confirmPassword: [
@@ -81,8 +81,8 @@
               url: this.$http.adornUrl('/sys/user/password'),
               method: 'post',
               data: this.$http.adornData({
-                'password': this.dataForm.password,
-                'newPassword': this.dataForm.newPassword
+                'credentials': this.dataForm.credentials,
+                'newCredentials': this.dataForm.newCredentials
               })
             }).then(({data}) => {
               this.$message({
