@@ -18,6 +18,9 @@ export const tableOption = {
     value: 'value'
   },
   column: [{
+    label: '角色ID',
+    prop: 'roleId'
+  }, {
     label: '角色名称',
     prop: 'roleName',
     search: true

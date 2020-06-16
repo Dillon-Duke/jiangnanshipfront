@@ -22,6 +22,10 @@ export const tableOption = {
     prop: 'username',
     search: true
   }, {
+    label: '真实姓名',
+    prop: 'realName',
+    search: true
+  }, {
     label: '性别',
     prop: 'sex',
     dicData: [

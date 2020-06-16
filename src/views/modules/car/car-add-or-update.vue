@@ -34,11 +34,11 @@
           list-type="picture-card"
           >
           <!-- list-type="picture-card" -->
-          <ul v-for="index in dataForm.sourcePhoto" :key="index" class="el-upload-list el-upload-list--picture-card" style="display: inline-block">
+          <!-- <ul v-for="index in dataForm.sourcePhoto" :key="index" class="el-upload-list el-upload-list--picture-card" style="display: inline-block">
             <li tabindex="0" class="el-upload-list__item is-success">
               <img  width="100%" :src="index" alt="暂未图片" class="el-upload-list__item-thumbnail">
             </li>
-          </ul> 
+          </ul>  -->
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>

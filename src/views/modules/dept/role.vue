@@ -40,6 +40,9 @@
     <add-or-update v-if="addOrUpdateVisible"
                    ref="addOrUpdate"
                    @refreshDataList="getDataList"></add-or-update>
+    <user-details v-if="UsersDetails"
+                   ref="roleUsersDetails"
+                   @refreshDataList="getDataList"></user-details>
   </div>
 </template>
 

@@ -5,7 +5,7 @@
   window.SITE_CONFIG = {}
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://192.168.0.143:8080'
+  window.SITE_CONFIG['baseUrl'] = 'http://129.204.74.133:8080'
   // 静态资源文件url
   window.SITE_CONFIG['resourcesUrl'] = 'http://pbs6gt8zf.bkt.clouddn.com/'
   // cdn地址 = 域名 + 版本号
