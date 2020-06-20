@@ -8,6 +8,11 @@
                @selection-change="selectionChange"
                @on-load="getDataList">
       <template slot="menuLeft">
+        <el-button type="primary"
+                   icon="el-icon-plus"
+                   size="small"
+                   v-if="isAuth('car:goods:save')"
+                   @click.stop="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger"
                    @click="deleteHandle()"
                    v-if="isAuth('car:goods:delete')"
@@ -21,7 +26,6 @@
                    size="small"
                    v-if="isAuth('car:goods:update')"
                    @click.stop="addOrUpdateHandle(scope.row.goodsId)">编辑</el-button>
-
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
@@ -97,14 +101,13 @@ export default {
     },
     // 删除
     deleteHandle (goods) {
-      var id = goods.goodsId
-      var goodsIds = id ? [id] : this.dataListSelections.map(item => {
-        return item.carId
+      let carIds = goods ? [goods.goodsId] : this.dataListSelections.map(item => {
+        return item.goodsId
       })
-      var goodsList = goods ? [goods] : this.dataListSelections.map(item => {
-        return item.goodsList
+      let goodsList = goods ? [goods] : this.dataListSelections.map(item => {
+        return item
       })
-      this.$confirm(`确定对[id=${goodsIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id= ${carIds.join(',')}]进行[${carIds ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

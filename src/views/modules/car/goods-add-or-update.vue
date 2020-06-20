@@ -25,6 +25,19 @@
       <el-form-item label-width="120px" label="物品高" prop="goodsHigh">
         <el-input v-model="dataForm.goodsHigh" placeholder="物品高"></el-input>
       </el-form-item>
+      <el-form-item label="物品图片" prop="sourceImage">
+        <el-upload
+          ref="imgUpload"
+          :limit=limitNum
+          :on-exceed="exceedFile"
+          :on-success="onSuccess"
+          :on-remove="handleRemove"
+          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+          :action="upLoadUrl"
+          list-type="picture-card">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form-item>
       <el-form-item label-width="120px" label="是否大型分段" prop="isBigGoods">
         <el-radio-group v-model="dataForm.isBigGoods">
           <el-radio :label="1">是</el-radio>
@@ -47,8 +60,11 @@
 
 <script>
   export default {
+    name: 'imgUpload',
     data () {
       return {
+        limitNum: 3,
+        upLoadUrl: '/proxyApi/file/upload',
         visible: false,
         dataForm: {
           goodsId: 0,
@@ -59,8 +75,8 @@
           goodsLength: '',
           goodsWidth: '',
           goodsHigh: '',
-          goodsImg: '',
-          goodsSource: '',
+          fileImage: [],
+          sourceImage: [],
           isBigGoods: '',
           isOverSize: ''
         },
@@ -72,6 +88,16 @@
       }
     },
     methods: {
+      exceedFile (files, fileList) {
+        this.$notify.warning({
+          title: '警告',
+          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
+        })
+      },
+      onSuccess (response, file, fileList) {
+        this.dataForm.fileImage.push(response.filename)  // 将文件id放在数组中
+        this.dataForm.sourceImage.push(response.fdfsUrl) // 将文件id放在数组中
+      },
       init (goodsId) {
         var ids = this.dataForm.goodsId = goodsId || 0
         this.visible = true
@@ -91,8 +117,9 @@
               this.dataForm.goodsLength = data.goodsLength
               this.dataForm.goodsWidth = data.goodsWidth
               this.dataForm.goodsHigh = data.goodsHigh
-              this.dataForm.goodsImg = data.goodsImg
-              this.dataForm.goodsSource = data.goodsSource
+              let reg = new RegExp('"', 'g') // g代表全部
+              this.dataForm.fileImage = JSON.stringify(data.fileImage).replace(reg, '').split(';') // 字符串转数组
+              this.dataForm.sourceImage = JSON.stringify(data.sourceImage).replace(reg, '').split(';') // 字符串转数组
               this.dataForm.isBigGoods = data.isBigGoods
               this.dataForm.isOverSize = data.isOverSize
             })
@@ -115,8 +142,8 @@
                 'goodsLength': this.dataForm.goodsLength,
                 'goodsWidth': this.dataForm.goodsWidth,
                 'goodsHigh': this.dataForm.goodsHigh,
-                'goodsImg': this.dataForm.goodsImg,
-                'goodsSource': this.dataForm.goodsSource,
+                'fileImage': this.dataForm.fileImage.join(';'),  // 数组转string
+                'sourceImage': this.dataForm.sourceImage.join(';'), // 数组转string
                 'isBigGoods': this.dataForm.isBigGoods,
                 'isOverSize': this.dataForm.isOverSize
               })
@@ -133,6 +160,39 @@
             })
           }
         })
+      },
+      // 表单不提交
+      dataFormCancle () {
+        var imageUrls = this.dataForm.sourcePhoto
+        var imageUrl = imageUrls ? [imageUrls] : this.dataListSelections.map(item => {
+          return item.imageUrl
+        })
+        if (imageUrl) {
+          this.$http({
+            url: this.$http.adornUrl('/file/delete'),
+            method: 'delete',
+            data: this.$http.adornData(imageUrl, false)
+          }).then(() => {
+            this.visible = false
+            this.$emit('refreshDataList')
+          }).catch(({res}) => {
+            console.log(res)
+          })
+        }
+      },
+      // 图片删除
+      handleRemove (file, fileList) {
+        var fileurl = file.response.fdfsUrl
+        var files = fileurl ? [fileurl] : this.dataListSelections.map(item => {
+          return item.files
+        })
+        if (files) {
+          this.$http({
+            url: this.$http.adornUrl('/file/delete'),
+            method: 'delete',
+            data: this.$http.adornData(files, false)
+          })
+        }
       }
     }
   }

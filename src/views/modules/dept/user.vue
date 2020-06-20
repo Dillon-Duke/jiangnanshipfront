@@ -13,7 +13,6 @@
                    size="small"
                    v-if="isAuth('dept:user:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
-
         <el-button type="danger"
                    @click="deleteHandle()"
                    v-if="isAuth('dept:user:delete')"
@@ -27,7 +26,6 @@
                    size="small"
                    v-if="isAuth('dept:user:update')"
                    @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
-
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"

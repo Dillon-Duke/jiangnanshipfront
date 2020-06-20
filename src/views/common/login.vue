@@ -89,7 +89,7 @@ export default {
             data: this.$http.adornData({
               'principal': this.dataForm.userName,
               'credentials': this.dataForm.password,
-              'sessionUUID': this.dataForm.uuid,
+              'sessionUuid': this.dataForm.uuid,
               'imageCode': this.dataForm.captcha
             })
           }).then(({ data }) => {

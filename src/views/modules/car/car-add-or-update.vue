@@ -22,7 +22,7 @@
       <el-form-item label="车辆高" prop="carHeight">
         <el-input v-model="dataForm.carHeight" placeholder="车辆高"></el-input>
       </el-form-item>
-      <el-form-item label="车辆图片" prop="sourcePhoto">
+      <el-form-item label="车辆图片" prop="sourceImage">
         <el-upload
           ref="imgUpload"
           :limit=limitNum
@@ -80,8 +80,8 @@
           carLength: '',
           carWight: '',
           carHeight: '',
-          carPhoto: [],
-          sourcePhoto: [],
+          fileImage: [],
+          sourceImage: [],
           emptyWeight: '',
           fullWeight: '',
           carState: 1
@@ -110,8 +110,8 @@
         })
       },
       onSuccess (response, file, fileList) {
-        this.dataForm.carPhoto.push(response.filename)  // 将文件id放在数组中
-        this.dataForm.sourcePhoto.push(response.fdfsUrl) // 将文件id放在数组中
+        this.dataForm.fileImage.push(response.filename)  // 将文件id放在数组中
+        this.dataForm.sourceImage.push(response.fdfsUrl) // 将文件id放在数组中
       },
       init (carId) {
         var ids = this.dataForm.carId = carId || 0
@@ -132,8 +132,8 @@
               this.dataForm.carWight = data.carWight
               this.dataForm.carHeight = data.carHeight
               let reg = new RegExp('"', 'g') // g代表全部
-              this.dataForm.carPhoto = JSON.stringify(data.sourcePhoto).replace(reg, '').split(';') // 字符串转数组
-              this.dataForm.sourcePhoto = JSON.stringify(data.sourcePhoto).replace(reg, '').split(';') // 字符串转数组
+              this.dataForm.fileImage = JSON.stringify(data.fileImage).replace(reg, '').split(';') // 字符串转数组
+              this.dataForm.sourceImage = JSON.stringify(data.sourceImage).replace(reg, '').split(';') // 字符串转数组
               this.dataForm.emptyWeight = data.emptyWeight
               this.dataForm.fullWeight = data.fullWeight
               this.dataForm.carState = data.carState
@@ -156,8 +156,8 @@
                 'carLength': this.dataForm.carLength,
                 'carWight': this.dataForm.carWight,
                 'carHeight': this.dataForm.carHeight,
-                'carPhoto': this.dataForm.carPhoto.join(';'),  // 数组转string
-                'sourcePhoto': this.dataForm.sourcePhoto.join(';'), // 数组转string
+                'fileImage': this.dataForm.fileImage.join(';'),  // 数组转string
+                'sourceImage': this.dataForm.sourceImage.join(';'), // 数组转string
                 'emptyWeight': this.dataForm.emptyWeight,
                 'fullWeight': this.dataForm.fullWeight,
                 'carState': this.dataForm.carState

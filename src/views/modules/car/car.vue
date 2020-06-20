@@ -13,7 +13,6 @@
                    size="small"
                    v-if="isAuth('car:car:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
-
         <el-button type="danger"
                    @click="deleteHandle()"
                    v-if="isAuth('car:car:delete')"
@@ -27,7 +26,6 @@
                    size="small"
                    v-if="isAuth('car:car:update')"
                    @click.stop="addOrUpdateHandle(scope.row.carId)">编辑</el-button>
-
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
@@ -103,14 +101,13 @@ export default {
     },
     // 删除
     deleteHandle (row) {
-      var id = row.carId
-      var carIds = id ? [id] : this.dataListSelections.map(item => {
+      let carIds = row ? [row] : this.dataListSelections.map(item => {
         return item.carId
       })
-      var rows = row ? [row] : this.dataListSelections.map(item => {
-        return item.row
+      let rows = row ? [row] : this.dataListSelections.map(item => {
+        return item
       })
-      this.$confirm(`确定对[id=${carIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${carIds.join(',')}]进行[${carIds ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

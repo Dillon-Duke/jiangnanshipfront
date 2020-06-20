@@ -38,7 +38,7 @@ export const tableOption = {
     prop: 'carHeight'
   }, {
     label: '车辆图片',
-    prop: 'sourcePhoto.',
+    prop: 'sourceImage.',
     type: 'upload',
     width: 100,
     listType: 'picture-card'
