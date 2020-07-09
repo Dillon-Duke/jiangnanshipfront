@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-role">
+  <div class="mod-massage">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,29 +11,36 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('dept:role:save')"
+                   v-if="isAuth('sys:massage:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
-
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('dept:role:delete')"
+                   v-if="isAuth('sys:massage:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-
       <template slot-scope="scope"
                 slot="menu">
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('dept:role:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.roleId)">编辑</el-button>
-
+                   v-if=" scope.row.isPublish == 0 ? isAuth('sys:massage:publish') : null"
+                   @click.stop="publishOrNot(scope.row,1)">发布</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('dept:role:delete')"
-                   @click.stop="deleteHandle(scope.row.roleId)">删除</el-button>
+                   v-if=" scope.row.isPublish == 1 ? isAuth('sys:massage:unpublish') : null"
+                   @click.stop="publishOrNot(scope.row,0)">取消发布</el-button>
+        <el-button type="primary"
+                   icon="el-icon-edit"
+                   size="small"
+                   v-if="isAuth('sys:massage:update')"
+                   @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
+        <el-button type="danger"
+                   icon="el-icon-delete"
+                   size="small"
+                   v-if="isAuth('sys:massage:delete')"
+                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -44,8 +51,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/dept/role'
-import AddOrUpdate from './role-add-or-update'
+import { tableOption } from '@/crud/sys/massage'
+import AddOrUpdate from './massage-add-or-update'
 export default {
   data () {
     return {
@@ -69,7 +76,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/role/page'),
+        url: this.$http.adornUrl('/app/common/msg/page'),
         method: 'get',
         params: this.$http.adornParams(
           Object.assign(
@@ -103,29 +110,49 @@ export default {
     },
     // 删除
     deleteHandle (id) {
-      var ids = id ? [id] : this.dataListSelections.map(item => {
-        return item.roleId
+      var userIds = id ? [id] : this.dataListSelections.map(item => {
+        return item.userId
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/dept/role'),
+          url: this.$http.adornUrl('/dept/user'),
           method: 'delete',
-          data: this.$http.adornData(ids, false)
+          data: this.$http.adornData(userIds, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.getDataList()
-            }
+            type: 'success'
           })
+        }).then(() => {
+          this.$router.go(0)
         })
       }).catch(() => { })
+    },
+    // 不发布或取消发布消息
+    publishOrNot (pojo, state) {
+      this.$http({
+        url: this.$http.adornUrl(`/app/common/msg/publishOrNot`),
+        method: 'put',
+        data: this.$http.adornData({
+          'id': pojo.id,
+          'massageName': pojo.massageName,
+          'massageDetail': pojo.massageDetail,
+          'fileName': pojo.fileName,
+          'fileResource': pojo.fileResource,
+          'isPublish': state
+        })
+      }).then(({data}) => {
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+      }).then(() => {
+        this.$router.go(0)
+      })
     }
   }
 }

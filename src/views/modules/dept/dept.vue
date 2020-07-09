@@ -77,8 +77,8 @@ export default {
     this.getDataList()
   },
   methods: {
-    // 获取数据列表
-    getDataList () {
+    // 初始化获取数据列表
+    getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/dept/dept/page'),

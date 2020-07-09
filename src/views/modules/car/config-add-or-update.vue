@@ -39,6 +39,9 @@
           paramValue: [
             { required: true, message: '参数值不能为空', trigger: 'blur' }
           ]
+        },
+        carTypeEnumsProps: {
+          label: 'name'
         }
       }
     },
