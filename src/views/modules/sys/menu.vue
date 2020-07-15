@@ -107,7 +107,7 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/sys/menu/page'),
-        method: 'get',
+        method: 'post',
         params: this.$http.adornParams()
       }).then(({ data }) => {
         this.dataList = treeDataTranslate(data, 'menuId')
@@ -129,9 +129,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl(`/sys/menu/${id}`),
-          method: 'delete',
-          data: this.$http.adornData()
+          url: this.$http.adornUrl(`/sys/menu/delete`),
+          method: 'post',
+          data: this.$http.adornData({
+            id: id
+          })
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

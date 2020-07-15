@@ -10,8 +10,19 @@
       <el-form-item label="消息内容" prop="massageDetail">
         <el-input type="textarea" :rows="3" placeholder="请输入消息内容" v-model="dataForm.massageDetail" />
       </el-form-item>
-      <el-form-item label="附件上传" prop="fileResource" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.password" type="password" placeholder="点击上传附件"></el-input>
+      <el-form-item v-if="!dataForm.id" label="附件上传" prop="fileResource">
+        <el-upload
+          ref="imgUpload"
+          :limit=limitNum
+          :on-exceed="exceedFile"
+          :on-success="onSuccess"
+          :on-remove="handleRemove"
+          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+          :action="upLoadUrl"
+          list-type="picture-card"
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

@@ -40,9 +40,10 @@
         </el-radio-group>
       </el-form-item>
        <el-form-item v-if="!dataForm.id" label="手机账户" size="mini" prop="deptUserAdd">
-        <el-checkbox-group v-model="dataForm.deptUserAdd">
-          <el-checkbox>创建</el-checkbox>
-        </el-checkbox-group>
+        <el-radio-group v-model="dataForm.deptUserAdd">
+          <el-radio :label="1">创建</el-radio>
+          <el-radio :label="0">不创建</el-radio>
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -93,7 +94,7 @@
           userSalt: '',
           phone: '',
           roleIdList: [],
-          deptUserAdd: '',
+          deptUserAdd: 0,
           status: 1
         },
         dataRule: {
@@ -121,7 +122,7 @@
         this.dataForm.id = id || 0
         this.$http({
           url: this.$http.adornUrl('/sys/role/list'),
-          method: 'get',
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.roleList = data
@@ -133,9 +134,11 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/sys/user/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
               this.dataForm.userName = data.username
               this.dataForm.realName = data.realName
@@ -154,8 +157,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/user`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.dataForm.id ? this.$http.adornUrl(`/sys/user/update`) : this.$http.adornUrl(`/sys/user/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'userId': this.dataForm.id || undefined,
                 'username': this.dataForm.userName,

@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-massage">
+  <div class="mod-appimage">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,11 +11,11 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('sys:massage:save')"
+                   v-if="isAuth('sys:appimage:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('sys:massage:delete')"
+                   v-if="isAuth('sys:appimage:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
@@ -24,22 +24,22 @@
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if=" scope.row.isPublish == 0 ? isAuth('sys:massage:publish') : null"
-                   @click.stop="publishOrNot(scope.row,1)">发布</el-button>
+                   v-if=" scope.row.isUse == 0 ? isAuth('sys:appimage:use') : null"
+                   @click.stop="useOrNot(scope.row,1)">应用</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if=" scope.row.isPublish == 1 ? isAuth('sys:massage:unpublish') : null"
-                   @click.stop="publishOrNot(scope.row,0)">取消发布</el-button>
+                   v-if=" scope.row.isUse == 1 ? isAuth('sys:appimage:unuse') : null"
+                   @click.stop="useOrNot(scope.row,0)">取消应用</el-button>
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('sys:massage:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
+                   v-if="isAuth('sys:appimage:update')"
+                   @click.stop="addOrUpdateHandle(scope.row.id,scope.row.isUse)">编辑</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('sys:massage:delete')"
+                   v-if="isAuth('sys:appimage:delete')"
                    @click.stop="deleteHandle(scope.row.id)">删除</el-button>
       </template>
     </avue-crud>
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/sys/massage'
-import AddOrUpdate from './massage-add-or-update'
+import { tableOption } from '@/crud/sys/appimage'
+import AddOrUpdate from './appimage-add-or-update'
 export default {
   data () {
     return {
@@ -76,8 +76,8 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/app/common/msg/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/lunch/image/page'),
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -102,11 +102,19 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (id) {
-      this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id)
-      })
+    addOrUpdateHandle (id, isUse) {
+      if (isUse === 1) {
+        this.$message({
+          message: '图片已应用，无法编辑',
+          type: 'error',
+          duration: 1000
+        })
+      } else {
+        this.addOrUpdateVisible = true
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init(id)
+        })
+      }
     },
     // 删除
     deleteHandle (id) {
@@ -119,8 +127,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/app/common/msg'),
-          method: 'delete',
+          url: this.$http.adornUrl('/lunch/image/delete'),
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
@@ -133,17 +141,15 @@ export default {
       }).catch(() => { })
     },
     // 不发布或取消发布消息
-    publishOrNot (pojo, ispublish) {
+    useOrNot (pojo, use) {
       this.$http({
-        url: this.$http.adornUrl(`/app/common/msg/publishOrNot`),
-        method: 'put',
+        url: this.$http.adornUrl(`/lunch/image/useOrNot`),
+        method: 'post',
         data: this.$http.adornData({
           'id': pojo.id,
-          'massageName': pojo.massageName,
-          'massageDetail': pojo.massageDetail,
-          'fileName': pojo.fileName,
-          'fileResource': pojo.fileResource,
-          'isPublish': ispublish
+          'fileImage': pojo.fileImage,
+          'sourceImage': pojo.sourceImage,
+          'isUse': use
         })
       }).then(({data}) => {
         this.$message({

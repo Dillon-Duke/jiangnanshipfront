@@ -15,6 +15,7 @@ module.exports = {
     proxyTable: devEnv.OPEN_PROXY === false ? {} : {
       '/proxyApi': {
         target: 'http://localhost:8080',
+        // target: 'http://localhost:8085',
         // target: 'http://129.204.74.133:8080/',
         changeOrigin: true,
         pathRewrite: {

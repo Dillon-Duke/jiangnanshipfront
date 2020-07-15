@@ -13,6 +13,9 @@
       <el-form-item label="车辆牌照" prop="carPlate">
         <el-input v-model="dataForm.carPlate" placeholder="车辆牌照"></el-input>
       </el-form-item>
+      <el-form-item label="车辆品牌" prop="carModel">
+        <el-input v-model="dataForm.carModel" placeholder="车辆品牌"></el-input>
+      </el-form-item>
       <el-form-item label="车辆长" prop="carLength">
         <el-input v-model="dataForm.carLength" placeholder="车辆长"></el-input>
       </el-form-item>
@@ -77,6 +80,7 @@
           carName: '',
           carNumber: '',
           carPlate: '',
+          carModel: '',
           carLength: '',
           carWight: '',
           carHeight: '',
@@ -128,6 +132,7 @@
               this.dataForm.carName = data.carName
               this.dataForm.carNumber = data.carNumber
               this.dataForm.carPlate = data.carPlate
+              this.dataForm.carModel = data.carModel
               this.dataForm.carLength = data.carLength
               this.dataForm.carWight = data.carWight
               this.dataForm.carHeight = data.carHeight
@@ -153,6 +158,7 @@
                 'carName': this.dataForm.carName,
                 'carNumber': this.dataForm.carNumber,
                 'carPlate': this.dataForm.carPlate,
+                'carModel': this.dataForm.carModel,
                 'carLength': this.dataForm.carLength,
                 'carWight': this.dataForm.carWight,
                 'carHeight': this.dataForm.carHeight,

@@ -28,6 +28,20 @@
       <el-form-item label="手机号" prop="phone">
         <el-input v-model="dataForm.phone" placeholder="手机号"></el-input>
       </el-form-item>
+      <el-form-item label="车辆图片" prop="sourceImage">
+        <el-upload
+          ref="imgUpload"
+          :limit=limitNum
+          :on-exceed="exceedFile"
+          :on-success="onSuccess"
+          :on-remove="handleRemove"
+          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+          :action="upLoadUrl"
+          list-type="picture-card"
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
         <el-checkbox-group v-model="dataForm.roleIdList" @change="bindCheckBox">
           <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}&nbsp;:&nbsp;{{ role.remark }}</el-checkbox>
@@ -44,6 +58,7 @@
 <script>
   import { isPhone } from '@/utils/validate'
   export default {
+    name: 'imgUpload',
     data () {
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
@@ -70,6 +85,8 @@
       }
       return {
         visible: false,
+        limitNum: 1,
+        upLoadUrl: '/proxyApi/file/upload',
         roleList: [],
         dataForm: {
           id: 0,
@@ -84,6 +101,8 @@
           roleIdList: [],
           userRoleId: '',
           userRoleName: '',
+          fileImage: '',
+          sourceImage: '',
           userDeptId: '',
           userDeptName: ''
         },
@@ -108,6 +127,16 @@
       }
     },
     methods: {
+      exceedFile (files, fileList) {
+        this.$notify.warning({
+          title: '警告',
+          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
+        })
+      },
+      onSuccess (response, file, fileList) {
+        this.dataForm.fileImage = response.filename
+        this.dataForm.sourceImage = response.fdfsUrl
+      },
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
@@ -139,6 +168,8 @@
               this.dataForm.userRoleName = data.userRoleName
               this.dataForm.userDeptId = data.userDeptId
               this.dataForm.userDeptName = data.userDeptName
+              this.dataForm.fileImage = data.fileImage
+              this.dataForm.sourceImage = data.sourceImage
             })
           }
         })
@@ -169,7 +200,9 @@
                 'userRoleName': this.dataForm.userRoleName,
                 'userDeptId': this.dataForm.userDeptId,
                 'userDeptName': this.dataForm.userDeptName,
-                'roleIdList': this.dataForm.roleIdList
+                'roleIdList': this.dataForm.roleIdList,
+                'fileImage': this.dataForm.fileImage,
+                'sourceImage': this.dataForm.sourceImage
               })
             }).then(({data}) => {
               this.$message({

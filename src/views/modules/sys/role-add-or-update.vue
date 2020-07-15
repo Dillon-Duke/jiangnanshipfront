@@ -56,7 +56,7 @@
         this.dataForm.id = id || 0
         this.$http({
           url: this.$http.adornUrl('/sys/menu/page'),
-          method: 'get',
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.menuList = treeDataTranslate(data, 'menuId', 'parentId')
@@ -69,9 +69,11 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/role/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/sys/role/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
               this.dataForm.roleName = data.roleName
               this.dataForm.remark = data.remark
@@ -89,8 +91,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/role`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/sys/role/update` : `/sys/role/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'roleId': this.dataForm.id || undefined,
                 'roleName': this.dataForm.roleName,

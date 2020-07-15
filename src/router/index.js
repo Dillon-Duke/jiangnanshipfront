@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
   } else {
     http({
       url: http.adornUrl('/sys/menu/nav'),
-      method: 'get',
+      method: 'post',
       params: http.adornParams()
     }).then(({ data }) => {
       sessionStorage.setItem('authorities', JSON.stringify(data.authorities || '[]'))

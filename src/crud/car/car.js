@@ -28,6 +28,9 @@ export const tableOption = {
     label: '车辆牌照',
     prop: 'carPlate'
   }, {
+    label: '车辆品牌',
+    prop: 'carModel'
+  }, {
     label: '车辆长',
     prop: 'carLength'
   }, {
@@ -38,10 +41,10 @@ export const tableOption = {
     prop: 'carHeight'
   }, {
     label: '车辆图片',
-    prop: 'sourceImage.',
+    prop: 'sourceImage',
     type: 'upload',
     width: 100,
-    listType: 'picture-card'
+    listType: 'picture-img'
   }, {
     label: '空车重量',
     prop: 'emptyWeight'

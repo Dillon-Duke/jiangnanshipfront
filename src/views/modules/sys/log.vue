@@ -35,7 +35,7 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/sys/log/page'),
-        method: 'get',
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {

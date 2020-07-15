@@ -117,7 +117,7 @@
         this.dataForm.id = id || 0
         this.$http({
           url: this.$http.adornUrl('/sys/menu/list'),
-          method: 'get',
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.menuList = treeDataTranslate(data, 'menuId')
@@ -130,9 +130,11 @@
           if (this.dataForm.id) {
             // 修改
             this.$http({
-              url: this.$http.adornUrl(`/sys/menu/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/sys/menu/info`),
               method: 'get',
-              params: this.$http.adornParams()
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
               this.dataForm.id = data.menuId
               this.dataForm.type = data.type
@@ -161,8 +163,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/menu`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/sys/menu/update` : `/sys/menu/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'menuId': this.dataForm.id || undefined,
                 'type': this.dataForm.type,

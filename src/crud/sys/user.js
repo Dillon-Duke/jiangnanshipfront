@@ -23,8 +23,7 @@ export const tableOption = {
     search: true
   }, {
     label: '真实姓名',
-    prop: 'realName',
-    search: true
+    prop: 'realName'
   }, {
     label: '性别',
     prop: 'sex',
@@ -42,11 +41,7 @@ export const tableOption = {
     prop: 'age'
   }, {
     label: '手机号码',
-    prop: 'phone',
-    search: true
-  }, {
-    label: '工号',
-    prop: 'jobNum'
+    prop: 'phone'
   }, {
     label: '状态',
     prop: 'status',

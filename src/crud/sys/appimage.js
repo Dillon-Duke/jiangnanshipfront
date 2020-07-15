@@ -18,45 +18,26 @@ export const tableOption = {
     value: 'value'
   },
   column: [{
-    label: '员工头像',
+    label: '图片缩略',
     prop: 'sourceImage',
     type: 'upload',
-    width: 100,
+    width: 300,
     listType: 'picture-img'
   }, {
-    label: '用户名',
-    prop: 'username',
+    label: '图片名称',
+    prop: 'customName',
     search: true
   }, {
-    label: '真实姓名',
-    prop: 'realName',
-    search: true
-  }, {
-    label: '性别',
-    prop: 'sex',
+    label: '是否应用',
+    prop: 'isUse',
     dicData: [
       {
-        label: '男',
+        label: '应用',
         value: 1
       }, {
-        label: '女',
-        value: 2
+        label: '未应用',
+        value: 0
       }
     ]
-  }, {
-    label: '年龄',
-    prop: 'age'
-  }, {
-    label: '手机号码',
-    prop: 'phone'
-  }, {
-    label: '工号',
-    prop: 'jobNum'
-  }, {
-    label: '员工角色',
-    prop: 'userRoleName'
-  }, {
-    label: '所属部门',
-    prop: 'userDeptName'
   }]
 }

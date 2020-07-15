@@ -1,7 +1,9 @@
 <template>
-  <div class="mod-home">   
-    <h2>前言</h2>
-  </div>
+<div>
+<h1>简介，找一个网站的代码放在这里</h1> 
+
+</div>
+
 </template>
 
 <script>

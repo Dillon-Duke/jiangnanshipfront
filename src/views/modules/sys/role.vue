@@ -70,7 +70,7 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/sys/role/page'),
-        method: 'get',
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -112,8 +112,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/sys/role'),
-          method: 'delete',
+          url: this.$http.adornUrl('/sys/role/delete'),
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
