@@ -68,7 +68,7 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/car/goods/page'),
-        method: 'get',
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -113,8 +113,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/goods'),
-          method: 'delete',
+          url: this.$http.adornUrl('/car/goods/delete'),
+          method: 'post',
           data: this.$http.adornData(goodsList, false)
         }).then(({ data }) => {
           this.$message({

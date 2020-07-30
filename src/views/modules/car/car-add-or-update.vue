@@ -124,9 +124,11 @@
           this.$refs.dataForm.resetFields()
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/car/car/info/${this.dataForm.carId}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/car/car/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.carId
+              })
             }).then(({data}) => {
               this.dataForm.carId = data.carId
               this.dataForm.carName = data.carName
@@ -151,8 +153,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/car/car`),
-              method: this.dataForm.carId ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.carId ? `/car/car/update` : `/car/car/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'carId': this.dataForm.carId || undefined,
                 'carName': this.dataForm.carName,

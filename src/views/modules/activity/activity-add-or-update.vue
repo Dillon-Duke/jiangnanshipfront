@@ -8,7 +8,7 @@
         <el-input v-model="dataForm.userName" placeholder="登录帐号"></el-input>
       </el-form-item>
       <el-form-item label="真实姓名" prop="realName">
-        <el-input v-model="dataForm.realName" placeholder="真实姓名"></el-input>
+        <el-input v-model="dataForm.realName" placeholder="用户真实姓名"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
@@ -28,24 +28,22 @@
       <el-form-item label="手机号" prop="phone">
         <el-input v-model="dataForm.phone" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item label="个人头像" prop="sourceImage">
-        <el-upload
-          ref="imgUpload"
-          :limit=limitNum
-          :on-exceed="exceedFile"
-          :on-success="onSuccess"
-          :on-remove="handleRemove"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          :action="upLoadUrl"
-          list-type="picture-card"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
-      </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
-        <el-checkbox-group v-model="dataForm.roleIdList" @change="bindCheckBox">
-          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}&nbsp;:&nbsp;{{ role.remark }}</el-checkbox>
+        <el-checkbox-group v-model="dataForm.roleIdList">
+          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
         </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="状态" size="mini" prop="status">
+        <el-radio-group v-model="dataForm.status">
+          <el-radio :label="0">禁用</el-radio>
+          <el-radio :label="1">正常</el-radio>
+        </el-radio-group>
+      </el-form-item>
+       <el-form-item v-if="!dataForm.id" label="手机账户" size="mini" prop="deptUserAdd">
+        <el-radio-group v-model="dataForm.deptUserAdd">
+          <el-radio :label="1">创建</el-radio>
+          <el-radio :label="0">不创建</el-radio>
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -58,7 +56,6 @@
 <script>
   import { isPhone } from '@/utils/validate'
   export default {
-    name: 'imgUpload',
     data () {
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
@@ -85,8 +82,6 @@
       }
       return {
         visible: false,
-        limitNum: 1,
-        upLoadUrl: '/proxyApi/file/upload',
         roleList: [],
         dataForm: {
           id: 0,
@@ -99,20 +94,15 @@
           userSalt: '',
           phone: '',
           roleIdList: [],
-          userRoleId: '',
-          userRoleName: '',
-          fileImage: '',
-          sourceImage: '',
-          userDeptId: '',
-          userDeptName: '',
-          jobNum: ''
+          deptUserAdd: 0,
+          status: 1
         },
         dataRule: {
           userName: [
             { required: true, message: '用户名不能为空', trigger: 'blur' }
           ],
           realName: [
-            { required: true, message: '用户真实姓名不能为空', trigger: 'blur' }
+            { required: true, message: '用户名真实姓名不能为空', trigger: 'blur' }
           ],
           password: [
             { validator: validatePassword, trigger: 'blur' }
@@ -128,20 +118,10 @@
       }
     },
     methods: {
-      exceedFile (files, fileList) {
-        this.$notify.warning({
-          title: '警告',
-          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
-        })
-      },
-      onSuccess (response, file, fileList) {
-        this.dataForm.fileImage = response.filename
-        this.dataForm.sourceImage = response.fdfsUrl
-      },
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/dept/role/list'),
+          url: this.$http.adornUrl('/sys/role/list'),
           method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
@@ -154,13 +134,12 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/dept/user/info`),
+              url: this.$http.adornUrl(`/sys/user/info`),
               method: 'post',
               data: this.$http.adornData({
                 id: this.dataForm.id
               })
             }).then(({data}) => {
-              debugger
               this.dataForm.userName = data.username
               this.dataForm.realName = data.realName
               this.dataForm.sex = data.sex
@@ -168,29 +147,17 @@
               this.dataForm.userSalt = data.userSalt
               this.dataForm.phone = data.phone
               this.dataForm.roleIdList = data.roleIdList
-              this.dataForm.userRoleId = data.userRoleId
-              this.dataForm.userRoleName = data.userRoleName
-              this.dataForm.userDeptId = data.userDeptId
-              this.dataForm.userDeptName = data.userDeptName
-              this.dataForm.fileImage = data.fileImage
-              this.dataForm.sourceImage = data.sourceImage
-              this.dataForm.jobNum = data.jobNum
+              this.dataForm.status = data.status
             })
           }
         })
-      },
-      // 设置单选框
-      bindCheckBox (value) {
-        if (this.dataForm.roleIdList.length > 1) {
-          this.dataForm.roleIdList.splice(0, 1)
-        }
       },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(this.dataForm.id ? `/dept/user/update` : `/dept/user/save`),
+              url: this.dataForm.id ? this.$http.adornUrl(`/sys/user/update`) : this.$http.adornUrl(`/sys/user/save`),
               method: 'post',
               data: this.$http.adornData({
                 'userId': this.dataForm.id || undefined,
@@ -201,14 +168,9 @@
                 'sex': this.dataForm.sex,
                 'userSalt': this.dataForm.userSalt,
                 'phone': this.dataForm.phone,
-                'userRoleId': this.dataForm.userRoleId,
-                'userRoleName': this.dataForm.userRoleName,
-                'userDeptId': this.dataForm.userDeptId,
-                'userDeptName': this.dataForm.userDeptName,
-                'roleIdList': this.dataForm.roleIdList,
-                'fileImage': this.dataForm.fileImage,
-                'sourceImage': this.dataForm.sourceImage,
-                'jobNum': this.dataForm.jobNum
+                'status': this.dataForm.status,
+                'deptUserAdd': this.dataForm.deptUserAdd,
+                'roleIdList': this.dataForm.roleIdList
               })
             }).then(({data}) => {
               this.$message({

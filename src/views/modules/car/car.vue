@@ -30,7 +30,7 @@
                    icon="el-icon-delete"
                    size="small"
                    v-if="isAuth('car:car:delete')"
-                   @click.stop="deleteHandle(scope.row)">删除</el-button>
+                   @click.stop="deleteHandle(scope.row.carId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -68,7 +68,7 @@ export default {
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/car/car/page'),
-        method: 'get',
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -100,22 +100,20 @@ export default {
       })
     },
     // 删除
-    deleteHandle (row) {
-      let carIds = row ? [row] : this.dataListSelections.map(item => {
-        return item.carId
+    deleteHandle (id) {
+      debugger
+      var ids = id ? [id] : this.dataListSelections.map(item => {
+        return item.id
       })
-      let rows = row ? [row] : this.dataListSelections.map(item => {
-        return item
-      })
-      this.$confirm(`确定对[id=${carIds.join(',')}]进行[${carIds ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/car'),
-          method: 'delete',
-          data: this.$http.adornData(rows, false)
+          url: this.$http.adornUrl('/car/car/delete'),
+          method: 'post',
+          data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',
@@ -126,7 +124,7 @@ export default {
             }
           })
         })
-      })
+      }).catch(() => { })
     }
   }
 }

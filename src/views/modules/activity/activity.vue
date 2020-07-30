@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-user">
+  <div class="mod-activity">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,26 +11,16 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('dept:user:save')"
+                   v-if="isAuth('activity:activity:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger"
-                   @click="deleteHandle()"
-                   v-if="isAuth('dept:user:delete')"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
       <template slot-scope="scope"
                 slot="menu">
-        <el-button type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   v-if="isAuth('dept:user:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('dept:user:delete')"
-                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
+                   v-if="isAuth('activity:activity:delete')"
+                   @click.stop="deleteHandle(scope.row.id)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -41,8 +31,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/dept/user'
-import AddOrUpdate from './user-add-or-update'
+import { tableOption } from '@/crud/activity/activity'
+import AddOrUpdate from './activity-add-or-update'
 export default {
   data () {
     return {
@@ -66,7 +56,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/user/page'),
+        url: this.$http.adornUrl('/activity/process/publish/getAllPublishActivity'),
         method: 'post',
         params: this.$http.adornParams(
           Object.assign(
@@ -109,7 +99,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/dept/user/delete'),
+          url: this.$http.adornUrl('/activity/process/publish/delete'),
           method: 'post',
           data: this.$http.adornData(userIds, false)
         }).then(({ data }) => {
@@ -122,7 +112,7 @@ export default {
             }
           })
         })
-      }).catch(() => { })
+      })
     }
   }
 }

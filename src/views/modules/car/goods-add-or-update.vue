@@ -7,13 +7,13 @@
       <el-form-item label-width="120px" label="工程编号" prop="proCode">
         <el-input v-model="dataForm.proCode" placeholder="工程编号"></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="驳运类别" prop="goodsType">
+      <el-form-item label-width="120px" label="物品类别" prop="goodsType">
         <el-input v-model="dataForm.goodsType" placeholder="驳运类别"></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="驳运物件" prop="goodsCode">
+      <el-form-item label-width="120px" label="分段编号" prop="goodsCode">
         <el-input v-model="dataForm.goodsCode" placeholder="驳运物件"></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="驳运重量" prop="goodsWeight">
+      <el-form-item label-width="120px" label="物品重量" prop="goodsWeight">
         <el-input v-model="dataForm.goodsWeight" placeholder="驳运重量"></el-input>
       </el-form-item>
       <el-form-item label-width="120px" label="物品长" prop="goodsLength">
@@ -105,9 +105,11 @@
           this.$refs.dataForm.resetFields()
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/car/goods/info/${this.dataForm.goodsId}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/car/goods/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.goodsId
+              })
             }).then(({data}) => {
               this.dataForm.goodsId = data.goodsId
               this.dataForm.proCode = data.proCode
@@ -131,8 +133,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/car/goods`),
-              method: this.dataForm.goodsId ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.goodsId ? `/car/goods/update` : `/car/goods/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'goodsId': this.dataForm.goodsId || undefined,
                 'proCode': this.dataForm.proCode,

@@ -5,7 +5,7 @@
   window.SITE_CONFIG = {}
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://129.204.74.133:8080'
+  window.SITE_CONFIG['baseUrl'] = 'http://129.204.74.133/back'
 
   // 静态资源文件url
   window.SITE_CONFIG['resourcesUrl'] = ''

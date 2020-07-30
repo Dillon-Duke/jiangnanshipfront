@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-user">
+  <div class="mod-role">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -8,29 +8,19 @@
                @selection-change="selectionChange"
                @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   v-if="isAuth('dept:user:save')"
-                   @click.stop="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger"
-                   @click="deleteHandle()"
-                   v-if="isAuth('dept:user:delete')"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
       <template slot-scope="scope"
                 slot="menu">
-        <el-button type="primary"
-                   icon="el-icon-edit"
+      <el-button type="primary"
+                   icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('dept:user:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+                   v-if="isAuth('activity:role:save') && scope.row.userRole === undefined"
+                   @click.stop="addOrUpdateHandle(undefined, scope.row.userRole)">{{scope.row.userRole == 2 ? '新增角色' : '新增用户'}}</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('dept:user:delete')"
-                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
+                   v-if="isAuth('activity:role:update')  && scope.row.userRole !== undefined"
+                   @click.stop="addOrUpdateHandle(scope.row.userRoleId, scope.row.userRole)">{{scope.row.userRole == 2 ? '修改角色' : '修改用户'}}</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
@@ -41,8 +31,8 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/dept/user'
-import AddOrUpdate from './user-add-or-update'
+import { tableOption } from '@/crud/activity/role'
+import AddOrUpdate from './role-add-or-update'
 export default {
   data () {
     return {
@@ -66,7 +56,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/user/page'),
+        url: this.$http.adornUrl('/activity/process/task/page'),
         method: 'post',
         params: this.$http.adornParams(
           Object.assign(
@@ -92,10 +82,10 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (id) {
+    addOrUpdateHandle (id, type) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id)
+        this.$refs.addOrUpdate.init(id, type)
       })
     },
     // 删除
@@ -109,7 +99,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/dept/user/delete'),
+          url: this.$http.adornUrl('/activity/process/task/delete'),
           method: 'post',
           data: this.$http.adornData(userIds, false)
         }).then(({ data }) => {
@@ -122,7 +112,7 @@ export default {
             }
           })
         })
-      }).catch(() => { })
+      })
     }
   }
 }

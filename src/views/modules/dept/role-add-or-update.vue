@@ -12,12 +12,12 @@
       </el-form-item>
       <el-form-item label="部门" size="mini" prop="deptIdList">
         <el-checkbox-group v-model="dataForm.deptIdList" @change="bindCheckBox">
-          <el-checkbox v-for="role in roleList" :key="role.deptId" :label="role.deptId">{{ role.deptName }}</el-checkbox>
+          <el-checkbox v-for="dept in deptList" :key="dept.deptId" :label="dept.deptId">{{ dept.deptName }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="权限" size="mini" prop="powerIdList">
         <el-checkbox-group v-model="dataForm.powerIdList">
-          <el-checkbox v-for="role in powerList" :key="role.confId" :label="role.confId">{{ role.paramKey }}</el-checkbox>
+          <el-checkbox v-for="power in powerList" :key="power.confId" :label="power.confId">{{ power.paramKey }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
     </el-form>
@@ -33,7 +33,7 @@
     data () {
       return {
         visible: false,
-        roleList: [],
+        deptList: [],
         powerList: [],
         menuListTreeProps: {
           label: 'deptName',
@@ -59,18 +59,18 @@
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/dept/config/list'),
-          method: 'get',
+          url: this.$http.adornUrl('/dept/authorization/list'),
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.powerList = data
         })
         this.$http({
           url: this.$http.adornUrl('/dept/dept/list'),
-          method: 'get',
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.roleList = data
+          this.deptList = data
         }).then(() => {
           this.visible = true
           this.$nextTick(() => {
@@ -79,13 +79,15 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/dept/role/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/dept/role/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
               this.dataForm.id = data.roleId
               this.dataForm.roleName = data.roleName
-              this.dataForm.roleDept = data.deptIdList[0]
+              this.dataForm.roleDept = data.roleDept
               this.dataForm.remark = data.remark
               this.dataForm.deptIdList = data.deptIdList
               this.dataForm.powerIdList = data.powerIdList
@@ -104,8 +106,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/dept/role`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/dept/role/update` : `/dept/role/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'roleId': this.dataForm.id || undefined,
                 'roleName': this.dataForm.roleName,

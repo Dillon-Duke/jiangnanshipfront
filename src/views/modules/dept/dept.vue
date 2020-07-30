@@ -57,7 +57,6 @@
                    @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
-
 <script>
 import AddOrUpdate from './dept-add-or-update'
 import { treeDataTranslate } from '@/utils'
@@ -78,11 +77,11 @@ export default {
   },
   methods: {
     // 初始化获取数据列表
-    getDataList (page, params) {
+    getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/dept/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/dept/dept/list'),
+        method: 'post',
         params: this.$http.adornParams()
       }).then(({ data }) => {
         this.dataList = treeDataTranslate(data, 'deptId')
@@ -104,9 +103,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl(`/dept/dept/${id}`),
-          method: 'delete',
-          data: this.$http.adornData()
+          url: this.$http.adornUrl(`/dept/dept/delete`),
+          method: 'post',
+          data: this.$http.adornData({
+            id: id
+          })
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

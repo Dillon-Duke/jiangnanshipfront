@@ -22,13 +22,13 @@ export const tableOption = {
     prop: 'proCode',
     search: true
   }, {
-    label: '驳运类别',
+    label: '物品类别',
     prop: 'goodsType'
   }, {
-    label: '驳运物件',
+    label: '分段编号',
     prop: 'goodsCode'
   }, {
-    label: '驳运重量',
+    label: '物品重量',
     prop: 'goodsWeight'
   }, {
     label: '物品长',

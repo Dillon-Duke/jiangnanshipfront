@@ -68,8 +68,8 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/config/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/dept/authorization/page'),
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -102,18 +102,18 @@ export default {
     },
     // 删除
     deleteHandle (confId) {
-      var ids = confId ? [confId] : this.dataListSelections.map(item => {
+      var idList = confId ? [confId] : this.dataListSelections.map(item => {
         return item.confId
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${confId ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${idList.join(',')}]进行[${confId ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/dept/config'),
-          method: 'delete',
-          data: this.$http.adornData(ids, false)
+          url: this.$http.adornUrl('/dept/authorization/delete'),
+          method: 'post',
+          data: this.$http.adornData(idList, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

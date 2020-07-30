@@ -57,7 +57,7 @@
         this.dataForm.id = id || 0
         this.$http({
           url: this.$http.adornUrl('/dept/dept/list'),
-          method: 'get',
+          method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.deptList = treeDataTranslate(data, 'deptId')
@@ -69,9 +69,11 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/dept/dept/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/dept/dept/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
               this.dataForm.id = data.deptId
               this.dataForm.deptName = data.deptName
@@ -92,8 +94,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/dept/dept`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/dept/dept/update` : `/dept/dept/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'deptId': this.dataForm.id || undefined,
                 'deptName': this.dataForm.deptName,
