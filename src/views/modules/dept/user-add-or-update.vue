@@ -28,24 +28,15 @@
       <el-form-item label="手机号" prop="phone">
         <el-input v-model="dataForm.phone" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item label="个人头像" prop="sourceImage">
-        <el-upload
-          ref="imgUpload"
-          :limit=limitNum
-          :on-exceed="exceedFile"
-          :on-success="onSuccess"
-          :on-remove="handleRemove"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          :action="upLoadUrl"
-          list-type="picture-card"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
+      <el-form-item label="部门" prop="userDeptName">
+        <el-select v-model="dataForm.userDeptName" filterable placeholder="请选择对应的部门" @change="getRoleList(dataForm.userDeptName)" style="width:270px;" >
+          <el-option v-for="item in deptList" :key="item.deptId" :label="item.deptName" :value="item.deptId" />
+        </el-select>
       </el-form-item>
-      <el-form-item label="角色" size="mini" prop="roleIdList">
-        <el-checkbox-group v-model="dataForm.roleIdList" @change="bindCheckBox">
-          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}&nbsp;:&nbsp;{{ role.remark }}</el-checkbox>
-        </el-checkbox-group>
+      <el-form-item label="角色" prop="roleIdList">
+        <el-select v-model="dataForm.roleIdList" multiple filterable placeholder="请选择对应的角色" style="width:270px;" >
+          <el-option v-for="item in roleList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
+        </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -85,8 +76,7 @@
       }
       return {
         visible: false,
-        limitNum: 1,
-        upLoadUrl: '/proxyApi/file/upload',
+        deptList: [],
         roleList: [],
         dataForm: {
           id: 0,
@@ -99,13 +89,13 @@
           userSalt: '',
           phone: '',
           roleIdList: [],
+          deptIdsList: [],
           userRoleId: '',
           userRoleName: '',
           fileImage: '',
           sourceImage: '',
           userDeptId: '',
-          userDeptName: '',
-          jobNum: ''
+          userDeptName: ''
         },
         dataRule: {
           userName: [
@@ -128,22 +118,21 @@
       }
     },
     methods: {
-      exceedFile (files, fileList) {
-        this.$notify.warning({
-          title: '警告',
-          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
-        })
-      },
-      onSuccess (response, file, fileList) {
-        this.dataForm.fileImage = response.filename
-        this.dataForm.sourceImage = response.fdfsUrl
-      },
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/dept/role/list'),
+          url: this.$http.adornUrl('/dept/dept/list'),
           method: 'post',
           params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.deptList = data
+        })
+        this.$http({
+          url: this.$http.adornUrl('/dept/role/roleList'),
+          method: 'post',
+          data: this.$http.adornData({
+            'id': id
+          })
         }).then(({data}) => {
           this.roleList = data
         }).then(() => {
@@ -160,7 +149,6 @@
                 id: this.dataForm.id
               })
             }).then(({data}) => {
-              debugger
               this.dataForm.userName = data.username
               this.dataForm.realName = data.realName
               this.dataForm.sex = data.sex
@@ -169,21 +157,29 @@
               this.dataForm.phone = data.phone
               this.dataForm.roleIdList = data.roleIdList
               this.dataForm.userRoleId = data.userRoleId
+              this.dataForm.deptIdsList = data.deptIdsList
               this.dataForm.userRoleName = data.userRoleName
               this.dataForm.userDeptId = data.userDeptId
               this.dataForm.userDeptName = data.userDeptName
               this.dataForm.fileImage = data.fileImage
               this.dataForm.sourceImage = data.sourceImage
-              this.dataForm.jobNum = data.jobNum
             })
           }
         })
       },
       // 设置单选框
-      bindCheckBox (value) {
-        if (this.dataForm.roleIdList.length > 1) {
-          this.dataForm.roleIdList.splice(0, 1)
-        }
+      getRoleList (id) {
+        // 清空下一个框
+        this.dataForm.roleIdList = ''
+        this.$http({
+          url: this.$http.adornUrl('/dept/role/roleUser'),
+          method: 'post',
+          data: this.$http.adornData({
+            'id': id
+          })
+        }).then(({data}) => {
+          this.roleList = data
+        })
       },
       // 表单提交
       dataFormSubmit () {
@@ -207,8 +203,7 @@
                 'userDeptName': this.dataForm.userDeptName,
                 'roleIdList': this.dataForm.roleIdList,
                 'fileImage': this.dataForm.fileImage,
-                'sourceImage': this.dataForm.sourceImage,
-                'jobNum': this.dataForm.jobNum
+                'sourceImage': this.dataForm.sourceImage
               })
             }).then(({data}) => {
               this.$message({

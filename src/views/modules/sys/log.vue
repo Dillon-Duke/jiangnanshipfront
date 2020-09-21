@@ -1,12 +1,6 @@
 <template>
   <div class="mod-log">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @on-load="getDataList">
-    </avue-crud>
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @on-load="getDataList"></avue-crud>
   </div>
 </template>
 

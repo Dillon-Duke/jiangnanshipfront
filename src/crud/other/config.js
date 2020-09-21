@@ -18,14 +18,14 @@ export const tableOption = {
     value: 'value'
   },
   column: [{
-    label: '角色名称',
-    prop: 'roleName',
+    label: '参数类型',
+    prop: 'paramKey',
     search: true
+  }, {
+    label: '参数值',
+    prop: 'paramValue'
   }, {
     label: '备注',
     prop: 'remark'
-  }, {
-    label: '创建时间',
-    prop: 'createDate'
   }]
 }

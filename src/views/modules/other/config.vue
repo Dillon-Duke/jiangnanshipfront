@@ -1,49 +1,22 @@
 <template>
   <div class="mod-config">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @selection-change="selectionChange"
-               @on-load="getDataList">
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button v-if="isAuth('sys:config:save')"
-                   type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   @click.stop="addOrUpdateHandle()">新增</el-button>
-
-        <el-button v-if="isAuth('sys:config:delete')"
-                   type="danger"
-                   @click="deleteHandle()"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="small" @click.stop="addOrUpdateHandle()">新增</el-button>
+        <el-button type="danger" @click="deleteHandle()" size="small" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-      <template slot-scope="scope"
-                slot="menu">
-        <el-button v-if="isAuth('sys:config:update')"
-                   type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
-
-        <el-button v-if="isAuth('sys:config:delete')"
-                   type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
+      <template slot-scope="scope" slot="menu">
+        <el-button type="primary" icon="el-icon-edit" size="small" @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="small" @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible"
-                   ref="addOrUpdate"
-                   @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/sys/config'
+import { tableOption } from '@/crud/other/config'
 import AddOrUpdate from './config-add-or-update'
 export default {
   data () {
@@ -68,8 +41,8 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/config/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/other/config/page'),
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -111,8 +84,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/sys/config'),
-          method: 'delete',
+          url: this.$http.adornUrl('/other/config/delete'),
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({

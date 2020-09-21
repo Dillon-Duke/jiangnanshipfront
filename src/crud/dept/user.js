@@ -50,9 +50,6 @@ export const tableOption = {
     label: '手机号码',
     prop: 'phone'
   }, {
-    label: '工号',
-    prop: 'jobNum'
-  }, {
     label: '员工角色',
     prop: 'userRoleName'
   }, {

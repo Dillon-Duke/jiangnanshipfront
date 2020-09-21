@@ -12,11 +12,12 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     // 代理列表, 是否开启代理通过[./dev.env.js]配置
-    proxyTable: devEnv.OPEN_PROXY === false ? {} : {
+    // proxyTable: devEnv.OPEN_PROXY === false ? {} : {
+    proxyTable: {
       '/proxyApi': {
-        // target: 'http://localhost:8080',
-        // target: 'http://localhost:8085',
-        target: 'http://129.204.74.133:8085/',
+        target: 'http://localhost:8080/back',
+        // target: 'http://test.100mhb.com:8085/back',
+        // target: 'http://129.204.74.133:8090/back',
         changeOrigin: true,
         pathRewrite: {
           '^/proxyApi': '/'

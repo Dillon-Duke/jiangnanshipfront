@@ -1,46 +1,23 @@
 <template>
   <div class="mod-config">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @selection-change="selectionChange"
-               @on-load="getDataList">
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   @click.stop="addOrUpdateHandle()">新增</el-button>
-
-        <el-button type="danger"
-                   @click="deleteHandle()"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('dept:query:save')" type="primary" icon="el-icon-plus" size="small" @click.stop="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('dept:query:delete')" type="danger" @click="deleteHandle()" size="small" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-      <template slot-scope="scope"
-                slot="menu">
-        <el-button type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   @click.stop="addOrUpdateHandle(scope.row.confId)">编辑</el-button>
-
-        <el-button type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   @click.stop="deleteHandle(scope.row.confId)">删除</el-button>
+      <template slot-scope="scope" slot="menu">
+        <el-button v-if="isAuth('dept:query:update')" type="primary" icon="el-icon-edit" size="small" @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
+        <el-button v-if="isAuth('dept:query:delete')" type="danger" icon="el-icon-delete" size="small" @click.stop="deleteHandle(scope.row.id)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible"
-                   ref="addOrUpdate"
-                   @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/config'
-import AddOrUpdate from './config-add-or-update'
+import { tableOption } from '@/crud/dept/query'
+import AddOrUpdate from './query-add-or-update'
 export default {
   data () {
     return {
@@ -64,8 +41,8 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/config/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/dept/query/page'),
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -90,26 +67,26 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (confId) {
+    addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(confId)
+        this.$refs.addOrUpdate.init(id)
       })
     },
     // 删除
-    deleteHandle (confId) {
-      var ids = confId ? [confId] : this.dataListSelections.map(item => {
-        return item.confId
+    deleteHandle (id) {
+      var idList = id ? [id] : this.dataListSelections.map(item => {
+        return item.id
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${confId ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${idList.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/config'),
-          method: 'delete',
-          data: this.$http.adornData(ids, false)
+          url: this.$http.adornUrl('/dept/query/delete'),
+          method: 'post',
+          data: this.$http.adornData(idList, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

@@ -18,14 +18,13 @@ export const tableOption = {
   },
   column: [{
     label: '流程定义Key',
-    prop: 'definitionKey',
-    search: true
+    prop: 'definitionKey'
   }, {
     label: '节点名称',
     prop: 'instanceName'
   }, {
-    label: '用户/角色名称',
-    prop: 'userName'
+    label: '角色名称',
+    prop: 'roleName'
   }, {
     label: '用户/角色',
     prop: 'userRole',

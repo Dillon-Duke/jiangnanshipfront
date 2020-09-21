@@ -6,17 +6,20 @@ import store from '@/store'                   // api: https://github.com/vuejs/v
 import VueCookie from 'vue-cookie'            // api: https://github.com/alfhen/vue-cookie
 import '@/icons'                              // api: http://www.iconfont.cn/
 import '@/element-ui-theme/style.css'
+import 'element-ui/lib/theme-chalk/index.css'
 import Avue from '@smallwei/avue'             // api: https://avue.top
 import '@smallwei/avue/lib/index.css'
 import '@/assets/scss/index.scss'
 import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/axios
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
+import echarts from 'echarts'
 
 Vue.use(Avue)
 Vue.use(VueCookie)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+Vue.prototype.$echarts = echarts
 
 // 挂载全局
 Vue.prototype.$http = httpRequest // ajax请求方法

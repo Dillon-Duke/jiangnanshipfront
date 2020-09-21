@@ -14,13 +14,13 @@
       <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('activity:role:save') && scope.row.userRole === undefined"
-                   @click.stop="addOrUpdateHandle(undefined, scope.row.userRole)">{{scope.row.userRole == 2 ? '新增角色' : '新增用户'}}</el-button>
+                   v-if="isAuth('activity:role:save') && scope.row.roleName === null"
+                   @click.stop="addOrUpdateHandle(undefined, scope.row.userRole)">{{'新增角色'}}</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('activity:role:update')  && scope.row.userRole !== undefined"
-                   @click.stop="addOrUpdateHandle(scope.row.userRoleId, scope.row.userRole)">{{scope.row.userRole == 2 ? '修改角色' : '修改用户'}}</el-button>
+                   v-if="isAuth('activity:role:update')  && scope.row.roleName !== null"
+                   @click.stop="addOrUpdateHandle(scope.row.id, scope.row.userRole)">{{'修改角色'}}</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->

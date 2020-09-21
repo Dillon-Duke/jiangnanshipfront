@@ -27,7 +27,7 @@
       return {
         visible: false,
         dataForm: {
-          confId: 0,
+          id: 0,
           paramKey: '',
           paramValue: '',
           remark: ''
@@ -50,11 +50,13 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
+              url: this.$http.adornUrl(`/dept/query/info`),
+              method: 'post',
+              data: this.$http.adornData({
+                id: this.dataForm.id
+              })
             }).then(({data}) => {
-              this.dataForm.confId = data.confId
+              this.dataForm.id = data.id
               this.dataForm.paramKey = data.paramKey
               this.dataForm.paramValue = data.paramValue
               this.dataForm.remark = data.remark
@@ -67,10 +69,10 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/dept/query/update` : `/dept/query/save`),
+              method: 'post',
               data: this.$http.adornData({
-                'confId': this.dataForm.confId || undefined,
+                'id': this.dataForm.id || undefined,
                 'paramKey': this.dataForm.paramKey,
                 'paramValue': this.dataForm.paramValue,
                 'remark': this.dataForm.remark

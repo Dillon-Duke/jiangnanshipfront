@@ -18,14 +18,17 @@ export const tableOption = {
     value: 'value'
   },
   column: [{
-    label: '参数名',
-    prop: 'paramKey',
+    label: '姓名',
+    prop: 'contName',
     search: true
   }, {
-    label: '参数值',
-    prop: 'paramValue'
+    label: '工号',
+    prop: 'contNumber'
   }, {
-    label: '备注',
-    prop: 'remark'
+    label: '电话',
+    prop: 'contPhone'
+  }, {
+    label: '所属部门',
+    prop: 'contDeptName'
   }]
 }

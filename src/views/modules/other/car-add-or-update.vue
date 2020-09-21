@@ -10,11 +10,16 @@
       <el-form-item label="车辆编号" prop="carNumber">
         <el-input v-model="dataForm.carNumber" placeholder="车辆编号"></el-input>
       </el-form-item>
-      <el-form-item label="车辆牌照" prop="carPlate">
-        <el-input v-model="dataForm.carPlate" placeholder="车辆牌照"></el-input>
-      </el-form-item>
       <el-form-item label="车辆品牌" prop="carModel">
         <el-input v-model="dataForm.carModel" placeholder="车辆品牌"></el-input>
+      </el-form-item>
+      <el-form-item label="车辆类型" prop="carType" >
+        <el-select v-model="dataForm.carType" placeholder="请选择">
+          <el-option v-for="item in carTypeList" :key="item.paramKeys" :label="item.remark + ' : ' + item.paramValue" :value="item.confId" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Oid编码" prop="carOid">
+        <el-input v-model="dataForm.carOid" placeholder="车辆品牌"></el-input>
       </el-form-item>
       <el-form-item label="车辆长" prop="carLength">
         <el-input v-model="dataForm.carLength" placeholder="车辆长"></el-input>
@@ -24,26 +29,6 @@
       </el-form-item>
       <el-form-item label="车辆高" prop="carHeight">
         <el-input v-model="dataForm.carHeight" placeholder="车辆高"></el-input>
-      </el-form-item>
-      <el-form-item label="车辆图片" prop="sourceImage">
-        <el-upload
-          ref="imgUpload"
-          :limit=limitNum
-          :on-exceed="exceedFile"
-          :on-success="onSuccess"
-          :on-remove="handleRemove"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          :action="upLoadUrl"
-          list-type="picture-card"
-          >
-          <!-- list-type="picture-card" -->
-          <!-- <ul v-for="index in dataForm.sourcePhoto" :key="index" class="el-upload-list el-upload-list--picture-card" style="display: inline-block">
-            <li tabindex="0" class="el-upload-list__item is-success">
-              <img  width="100%" :src="index" alt="暂未图片" class="el-upload-list__item-thumbnail">
-            </li>
-          </ul>  -->
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
       </el-form-item>
       <el-form-item label="空车重量" prop="emptyWeight">
         <el-input v-model="dataForm.emptyWeight" placeholder="空车重量"></el-input>
@@ -59,6 +44,11 @@
           <el-radio :label="4">报废</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item label="所属部门" prop="deptIdList">
+        <el-checkbox-group v-model="dataForm.deptIdList" @change="bindCheckBox">
+          <el-checkbox v-for="dept in deptList" :key="dept.deptId" :label="dept.deptId">{{ dept.deptName }}</el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="dataFormCancle()">取消</el-button>
@@ -69,25 +59,29 @@
 
 <script>
   export default {
-    name: 'imgUpload',
     data () {
       return {
         limitNum: 3,
-        upLoadUrl: '/proxyApi/file/upload',
         visible: false,
+        carTypeList: [],
+        deptList: [],
         dataForm: {
           carId: 0,
           carName: '',
           carNumber: '',
-          carPlate: '',
           carModel: '',
+          carType: '',
+          carOid: '',
           carLength: '',
           carWight: '',
           carHeight: '',
-          fileImage: [],
-          sourceImage: [],
+          fileImage: '',
+          sourceImage: '',
+          deptIdList: [],
           emptyWeight: '',
           fullWeight: '',
+          followDeptId: '',
+          followDeptName: '',
           carState: 1
         },
         dataRule: {
@@ -107,24 +101,30 @@
       }
     },
     methods: {
-      exceedFile (files, fileList) {
-        this.$notify.warning({
-          title: '警告',
-          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
-        })
-      },
-      onSuccess (response, file, fileList) {
-        this.dataForm.fileImage.push(response.filename)  // 将文件id放在数组中
-        this.dataForm.sourceImage.push(response.fdfsUrl) // 将文件id放在数组中
-      },
       init (carId) {
         var ids = this.dataForm.carId = carId || 0
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs.dataForm.resetFields()
+        this.$http({
+          url: this.$http.adornUrl('/other/config/carTypeList'),
+          method: 'post',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.carTypeList = data
+        })
+        this.$http({
+          url: this.$http.adornUrl('/dept/dept/list'),
+          method: 'post',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.deptList = data
+        }).then(() => {
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs.dataForm.resetFields()
+          })
+        }).then(() => {
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/car/car/info`),
+              url: this.$http.adornUrl(`/other/car/info`),
               method: 'post',
               data: this.$http.adornData({
                 id: this.dataForm.carId
@@ -133,42 +133,55 @@
               this.dataForm.carId = data.carId
               this.dataForm.carName = data.carName
               this.dataForm.carNumber = data.carNumber
-              this.dataForm.carPlate = data.carPlate
               this.dataForm.carModel = data.carModel
+              this.dataForm.carType = data.carType
+              this.dataForm.carOid = data.carOid
               this.dataForm.carLength = data.carLength
               this.dataForm.carWight = data.carWight
               this.dataForm.carHeight = data.carHeight
-              let reg = new RegExp('"', 'g') // g代表全部
-              this.dataForm.fileImage = JSON.stringify(data.fileImage).replace(reg, '').split(';') // 字符串转数组
-              this.dataForm.sourceImage = JSON.stringify(data.sourceImage).replace(reg, '').split(';') // 字符串转数组
+              this.dataForm.fileImage = data.fileImage
+              this.dataForm.sourceImage = data.sourceImage
               this.dataForm.emptyWeight = data.emptyWeight
               this.dataForm.fullWeight = data.fullWeight
               this.dataForm.carState = data.carState
+              this.dataForm.followDeptId = data.followDeptId
+              this.dataForm.followDeptName = data.followDeptName
+              this.dataForm.deptIdList = data.deptIdList
             })
           }
         })
+      },
+       // 设置单选框
+      bindCheckBox (value) {
+        if (this.dataForm.deptIdList.length > 1) {
+          this.dataForm.deptIdList.splice(0, 1)
+        }
       },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(this.dataForm.carId ? `/car/car/update` : `/car/car/save`),
+              url: this.$http.adornUrl(this.dataForm.carId ? `/other/car/update` : `/other/car/save`),
               method: 'post',
               data: this.$http.adornData({
                 'carId': this.dataForm.carId || undefined,
                 'carName': this.dataForm.carName,
                 'carNumber': this.dataForm.carNumber,
-                'carPlate': this.dataForm.carPlate,
                 'carModel': this.dataForm.carModel,
+                'carType': this.dataForm.carType,
+                'carOid': this.dataForm.carOid,
                 'carLength': this.dataForm.carLength,
                 'carWight': this.dataForm.carWight,
                 'carHeight': this.dataForm.carHeight,
-                'fileImage': this.dataForm.fileImage.join(';'),  // 数组转string
-                'sourceImage': this.dataForm.sourceImage.join(';'), // 数组转string
+                'fileImage': this.dataForm.fileImage,
+                'sourceImage': this.dataForm.sourceImage,
                 'emptyWeight': this.dataForm.emptyWeight,
                 'fullWeight': this.dataForm.fullWeight,
-                'carState': this.dataForm.carState
+                'carState': this.dataForm.carState,
+                'followDeptId': this.dataForm.followDeptId,
+                'followDeptName': this.dataForm.followDeptName,
+                'deptIdList': this.dataForm.deptIdList
               })
             }).then(({data}) => {
               this.$message({
@@ -183,39 +196,6 @@
             })
           }
         })
-      },
-      // 表单不提交
-      dataFormCancle () {
-        var imageUrls = this.dataForm.sourcePhoto
-        var imageUrl = imageUrls ? [imageUrls] : this.dataListSelections.map(item => {
-          return item.imageUrl
-        })
-        if (imageUrl) {
-          this.$http({
-            url: this.$http.adornUrl('/file/delete'),
-            method: 'delete',
-            data: this.$http.adornData(imageUrl, false)
-          }).then(() => {
-            this.visible = false
-            this.$emit('refreshDataList')
-          }).catch(({res}) => {
-            console.log(res)
-          })
-        }
-      },
-      // 图片删除
-      handleRemove (file, fileList) {
-        var fileurl = file.response.fdfsUrl
-        var files = fileurl ? [fileurl] : this.dataListSelections.map(item => {
-          return item.files
-        })
-        if (files) {
-          this.$http({
-            url: this.$http.adornUrl('/file/delete'),
-            method: 'delete',
-            data: this.$http.adornData(files, false)
-          })
-        }
       }
     }
   }

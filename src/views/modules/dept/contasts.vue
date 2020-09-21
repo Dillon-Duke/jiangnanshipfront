@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-car">
+  <div class="mod-contasts">
     <avue-crud ref="crud"
                :page="page"
                :data="dataList"
@@ -11,11 +11,11 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('car:car:save')"
+                   v-if="isAuth('dept:contasts:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('car:car:delete')"
+                   v-if="isAuth('dept:contasts:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
@@ -24,26 +24,25 @@
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('car:car:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.carId)">编辑</el-button>
+                   v-if="isAuth('dept:contasts:update')"
+                   @click.stop="addOrUpdateHandle(scope.row.contId)">编辑</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('car:car:delete')"
-                   @click.stop="deleteHandle(scope.row.carId)">删除</el-button>
+                   v-if="isAuth('dept:contasts:delete')"
+                   @click.stop="deleteHandle(scope.row.contId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible"
                    ref="addOrUpdate"
-                   @refreshDataList="getDataList">
-    </add-or-update>
+                   @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/car'
-import AddOrUpdate from './car-add-or-update'
+import { tableOption } from '@/crud/dept/contasts'
+import AddOrUpdate from './contasts-add-or-update'
 export default {
   data () {
     return {
@@ -67,7 +66,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/car/page'),
+        url: this.$http.adornUrl('/dept/contasts/page'),
         method: 'post',
         params: this.$http.adornParams(
           Object.assign(
@@ -101,19 +100,18 @@ export default {
     },
     // 删除
     deleteHandle (id) {
-      debugger
-      var ids = id ? [id] : this.dataListSelections.map(item => {
-        return item.id
+      var userIds = id ? [id] : this.dataListSelections.map(item => {
+        return item.contId
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/car/delete'),
+          url: this.$http.adornUrl('/dept/contasts/delete'),
           method: 'post',
-          data: this.$http.adornData(ids, false)
+          data: this.$http.adornData(userIds, false)
         }).then(({ data }) => {
           this.$message({
             message: '操作成功',

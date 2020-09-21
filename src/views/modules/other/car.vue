@@ -1,23 +1,49 @@
 <template>
-  <div class="mod-role">
-    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
+  <div class="mod-car">
+    <avue-crud ref="crud"
+               :page="page"
+               :data="dataList"
+               :option="tableOption"
+               @search-change="searchChange"
+               @selection-change="selectionChange"
+               @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary" icon="el-icon-plus" size="small" v-if="isAuth('sys:role:save')" @click.stop="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger" @click="deleteHandle()" v-if="isAuth('sys:role:delete')" size="small" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary"
+                   icon="el-icon-plus"
+                   size="small"
+                   v-if="isAuth('other:car:save')"
+                   @click.stop="addOrUpdateHandle()">新增</el-button>
+        <el-button type="danger"
+                   @click="deleteHandle()"
+                   v-if="isAuth('other:car:delete')"
+                   size="small"
+                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-      <template slot-scope="scope" slot="menu">
-        <el-button type="primary" icon="el-icon-edit" size="small" v-if="isAuth('sys:role:update')" @click.stop="addOrUpdateHandle(scope.row.roleId)">编辑</el-button>
-        <el-button type="danger" icon="el-icon-delete" size="small" v-if="isAuth('sys:role:delete')" @click.stop="deleteHandle(scope.row.roleId)">删除</el-button>
+      <template slot-scope="scope"
+                slot="menu">
+        <el-button type="primary"
+                   icon="el-icon-edit"
+                   size="small"
+                   v-if="isAuth('other:car:update')"
+                   @click.stop="addOrUpdateHandle(scope.row.carId)">编辑</el-button>
+        <el-button type="danger"
+                   icon="el-icon-delete"
+                   size="small"
+                   v-if="isAuth('other:car:delete')"
+                   @click.stop="deleteHandle(scope.row.carId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible"
+                   ref="addOrUpdate"
+                   @refreshDataList="getDataList">
+    </add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/sys/role'
-import AddOrUpdate from './role-add-or-update'
+import { tableOption } from '@/crud/other/car'
+import AddOrUpdate from './car-add-or-update'
 export default {
   data () {
     return {
@@ -41,7 +67,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/role/page'),
+        url: this.$http.adornUrl('/other/car/page'),
         method: 'post',
         params: this.$http.adornParams(
           Object.assign(
@@ -76,7 +102,7 @@ export default {
     // 删除
     deleteHandle (id) {
       var ids = id ? [id] : this.dataListSelections.map(item => {
-        return item.roleId
+        return item.carId
       })
       this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
@@ -84,7 +110,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/sys/role/delete'),
+          url: this.$http.adornUrl('/other/car/delete'),
           method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {

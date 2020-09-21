@@ -1,58 +1,25 @@
 <template>
-  <div class="mod-massage">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @selection-change="selectionChange"
-               @on-load="getDataList">
+  <div class="mod-message">
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   v-if="isAuth('sys:massage:save')"
-                   @click.stop="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger"
-                   @click="deleteHandle()"
-                   v-if="isAuth('sys:massage:delete')"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="small" v-if="isAuth('sys:message:save')" @click.stop="addOrUpdateHandle()">新增</el-button>
+        <el-button type="danger" @click="deleteHandle()" v-if="isAuth('sys:message:delete')" size="small" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-      <template slot-scope="scope"
-                slot="menu">
-        <el-button type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   v-if=" scope.row.isPublish == 0 ? isAuth('sys:massage:publish') : null"
-                   @click.stop="publishOrNot(scope.row,1)">发布</el-button>
-        <el-button type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   v-if=" scope.row.isPublish == 1 ? isAuth('sys:massage:unpublish') : null"
-                   @click.stop="publishOrNot(scope.row,0)">取消发布</el-button>
-        <el-button type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   v-if="isAuth('sys:massage:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
-        <el-button type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   v-if="isAuth('sys:massage:delete')"
-                   @click.stop="deleteHandle(scope.row.id)">删除</el-button>
+      <template slot-scope="scope" slot="menu">
+        <el-button type="primary" icon="el-icon-edit" size="small" v-if=" scope.row.isPublish == 0 ? isAuth('sys:message:publish') : null" @click.stop="publishOrNot(scope.row,1)">发布</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="small" v-if=" scope.row.isPublish == 1 ? isAuth('sys:message:unpublish') : null" @click.stop="publishOrNot(scope.row,0)">取消发布</el-button>
+        <el-button type="primary" icon="el-icon-edit" size="small" v-if="isAuth('sys:message:update')" @click.stop="addOrUpdateHandle(scope.row.id)">编辑</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="small" v-if="isAuth('sys:message:delete')" @click.stop="deleteHandle(scope.row.id)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible"
-                   ref="addOrUpdate"
-                   @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-import { tableOption } from '@/crud/sys/massage'
-import AddOrUpdate from './massage-add-or-update'
+import { tableOption } from '@/crud/sys/message'
+import AddOrUpdate from './message-add-or-update'
 export default {
   data () {
     return {
@@ -76,8 +43,8 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/app/common/msg/page'),
-        method: 'get',
+        url: this.$http.adornUrl('/common/massage/page'),
+        method: 'post',
         params: this.$http.adornParams(
           Object.assign(
             {
@@ -119,8 +86,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/app/common/msg'),
-          method: 'delete',
+          url: this.$http.adornUrl('/common/massage/delete'),
+          method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           this.$message({
@@ -135,8 +102,8 @@ export default {
     // 不发布或取消发布消息
     publishOrNot (pojo, ispublish) {
       this.$http({
-        url: this.$http.adornUrl(`/app/common/msg/publishOrNot`),
-        method: 'put',
+        url: this.$http.adornUrl(`/common/massage/publishOrNot`),
+        method: 'post',
         data: this.$http.adornData({
           'id': pojo.id,
           'massageName': pojo.massageName,

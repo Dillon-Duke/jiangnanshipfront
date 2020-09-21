@@ -23,6 +23,11 @@
                        width="200"
                        label="部门编号">
       </el-table-column>
+      <el-table-column prop="deptType"
+                       align="center"
+                       width="200"
+                       label="驳运部门">
+      </el-table-column>
       <el-table-column prop="remark"
                        header-align="center"
                        align="center"
@@ -63,7 +68,6 @@ import { treeDataTranslate } from '@/utils'
 export default {
   data () {
     return {
-      dataForm: {},
       dataList: [],
       dataListLoading: false,
       addOrUpdateVisible: false
@@ -80,7 +84,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/dept/dept/list'),
+        url: this.$http.adornUrl('/dept/dept/deptList'),
         method: 'post',
         params: this.$http.adornParams()
       }).then(({ data }) => {

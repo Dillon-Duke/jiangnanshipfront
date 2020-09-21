@@ -4,24 +4,14 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="130px">
-      <el-form-item v-if=" this.dataForm.type === 1" label="用户名称">
-        <el-select v-model="username" filterable placeholder= "请选择">
-          <el-option
-            v-for="item in userList"
-            :key="item.userId"
-            :label="item.username"
-            :value="item.userId">
-          </el-option>
+      <el-form-item label="角色名称" prop="roleName">
+        <el-select v-model="dataForm.roleName" @change="getUserList(dataForm.roleName)" filterable placeholder="请选择对应的角色" >
+          <el-option v-for="item in roleList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
         </el-select>
       </el-form-item>
-      <el-form-item  v-if=" this.dataForm.type === 2" label="角色名称">
-        <el-select v-model="roleName" filterable placeholder="请选择">
-          <el-option
-            v-for="item in roleList"
-            :key="item.roleId"
-            :label="item.roleName"
-            :value="item.roleId">
-          </el-option>
+      <el-form-item label="用户名称" prop="userNameList">
+        <el-select v-model="dataForm.userNameList"  multiple filterable placeholder="请选择对应的用户">
+          <el-option v-for="item in userList" :key="item.userId" :label="item.realName" :value="item.userId" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -33,38 +23,29 @@
 </template>
 
 <script>
-  import Icon from '@/icons'
   export default {
     data () {
       return {
         visible: false,
         dataForm: {
           id: 0,
-          type: '',
-          name: ''
+          userNameList: [],
+          userRoleId: '',
+          userName: '',
+          roleName: ''
         },
         userList: [],
-        roleList: [],
-        username: '',
-        roleName: ''
+        roleList: []
       }
-    },
-    created () {
-      this.iconList = Icon.getNameList()
     },
     methods: {
       init (id, type) {
         this.dataForm.id = id || undefined
         this.$http({
-          url: this.$http.adornUrl(type === 1 ? '/dept/user/list' : '/dept/role/list'),
-          method: 'post',
-          params: this.$http.adornParams()
+          url: this.$http.adornUrl('/dept/role/list'),
+          method: 'post'
         }).then(({data}) => {
-          if (type === 1) {
-            this.userList = data
-          } else {
-            this.roleList = data
-          }
+          this.roleList = data
         }).then(() => {
           this.visible = true
           this.$nextTick(() => {
@@ -74,18 +55,18 @@
           if (this.dataForm.id) {
             // 修改
             this.$http({
-              url: this.$http.adornUrl(type === 1 ? '/dept/user/info' : '/dept/role/info'),
+              url: this.$http.adornUrl('/activity/process/task/info'),
               method: 'post',
               data: this.$http.adornData({
                 id: this.dataForm.id
               })
             }).then(({data}) => {
-              this.dataForm.id = type === 1 ? data.userId : data.roleId
-              this.dataForm.name = type === 2 ? data.username : data.roleName
+              this.dataForm.id = data.id
+              this.dataForm.userNameList = data.userNameList
+              this.dataForm.userRoleId = data.userRoleId
+              this.dataForm.roleName = data.roleName
+              this.dataForm.userName = data.userName
             })
-          } else {
-            this.userList = []
-            this.roleList = []
           }
         }).then(() => {
           this.dataForm.type = type
@@ -94,17 +75,33 @@
       handleSelectMenuChange (val) {
         this.dataForm.parentId = val[val.length - 1]
       },
+      // 获得对应的用户列表
+      getUserList (id) {
+        // 清空下一个框
+        this.dataForm.userNameList = ''
+        this.$http({
+          url: this.$http.adornUrl('/dept/user/roleUser'),
+          method: 'post',
+          data: this.$http.adornData({
+            'id': id
+          })
+        }).then(({data}) => {
+          this.userList = data
+        })
+      },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(this.dataForm.id ? `/sys/menu/update` : `/sys/menu/save`),
+              url: this.$http.adornUrl(this.dataForm.id ? `/activity/process/task/update` : `/activity/process/task/save`),
               method: 'post',
               data: this.$http.adornData({
-                'menuId': this.dataForm.id || undefined,
-                'type': this.dataForm.type,
-                'name': this.dataForm.name
+                'id': this.dataForm.id || undefined,
+                'userNameList': this.dataForm.userNameList,
+                'userRoleId': this.dataForm.userRoleId,
+                'roleName': this.dataForm.roleName,
+                'userName': this.dataForm.userName
               })
             }).then(({data}) => {
               this.$message({

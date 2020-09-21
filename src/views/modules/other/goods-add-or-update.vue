@@ -46,8 +46,10 @@
       </el-form-item>
       <el-form-item label-width="120px" label="是否超长宽高" prop="isOverSize">
         <el-radio-group v-model="dataForm.isOverSize">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
+          <el-radio :label="1">正常</el-radio>
+          <el-radio :label="0">超高</el-radio>
+          <el-radio :label="1">超宽</el-radio>
+          <el-radio :label="0">超高宽</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -105,7 +107,7 @@
           this.$refs.dataForm.resetFields()
           if (ids) {
             this.$http({
-              url: this.$http.adornUrl(`/car/goods/info`),
+              url: this.$http.adornUrl(`/other/goods/info`),
               method: 'post',
               data: this.$http.adornData({
                 id: this.dataForm.goodsId
@@ -133,7 +135,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(this.dataForm.goodsId ? `/car/goods/update` : `/car/goods/save`),
+              url: this.$http.adornUrl(this.dataForm.goodsId ? `/other/goods/update` : `/other/goods/save`),
               method: 'post',
               data: this.$http.adornData({
                 'goodsId': this.dataForm.goodsId || undefined,
@@ -162,39 +164,6 @@
             })
           }
         })
-      },
-      // 表单不提交
-      dataFormCancle () {
-        var imageUrls = this.dataForm.sourcePhoto
-        var imageUrl = imageUrls ? [imageUrls] : this.dataListSelections.map(item => {
-          return item.imageUrl
-        })
-        if (imageUrl) {
-          this.$http({
-            url: this.$http.adornUrl('/file/delete'),
-            method: 'delete',
-            data: this.$http.adornData(imageUrl, false)
-          }).then(() => {
-            this.visible = false
-            this.$emit('refreshDataList')
-          }).catch(({res}) => {
-            console.log(res)
-          })
-        }
-      },
-      // 图片删除
-      handleRemove (file, fileList) {
-        var fileurl = file.response.fdfsUrl
-        var files = fileurl ? [fileurl] : this.dataListSelections.map(item => {
-          return item.files
-        })
-        if (files) {
-          this.$http({
-            url: this.$http.adornUrl('/file/delete'),
-            method: 'delete',
-            data: this.$http.adornData(files, false)
-          })
-        }
       }
     }
   }

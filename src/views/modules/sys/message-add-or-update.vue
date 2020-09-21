@@ -10,20 +10,6 @@
       <el-form-item label="消息内容" prop="massageDetail">
         <el-input type="textarea" :rows="3" placeholder="请输入消息内容" v-model="dataForm.massageDetail" />
       </el-form-item>
-      <el-form-item v-if="!dataForm.id" label="附件上传" prop="fileResource">
-        <el-upload
-          ref="imgUpload"
-          :limit=limitNum
-          :on-exceed="exceedFile"
-          :on-success="onSuccess"
-          :on-remove="handleRemove"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          :action="upLoadUrl"
-          list-type="picture-card"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
-      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -67,9 +53,11 @@
         })
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(`/app/common/msg/info/${this.dataForm.id}`),
-            method: 'get',
-            params: this.$http.adornParams()
+            url: this.$http.adornUrl(`/common/massage/info`),
+            method: 'post',
+            data: this.$http.adornData({
+              id: this.dataForm.id
+            })
           }).then(({data}) => {
             this.dataForm.massageName = data.massageName
             this.dataForm.massageDetail = data.massageDetail
@@ -90,8 +78,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/app/common/msg`),
-              method: this.dataForm.id ? 'put' : 'post',
+              url: this.$http.adornUrl(this.dataForm.id ? `/common/massage/update` : `/common/massage/save`),
+              method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
                 'massageName': this.dataForm.massageName,

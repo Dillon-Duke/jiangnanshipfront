@@ -1,44 +1,17 @@
 <template>
   <div class="mod-user">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @selection-change="selectionChange"
-               @on-load="getDataList">
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
       <template slot="menuLeft">
-        <el-button type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   v-if="isAuth('sys:user:save')"
-                   @click.stop="addOrUpdateHandle()">新增</el-button>
-
-        <el-button type="danger"
-                   @click="deleteHandle()"
-                   v-if="isAuth('sys:user:delete')"
-                   size="small"
-                   :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="small" v-if="isAuth('sys:user:save')" @click.stop="addOrUpdateHandle()">新增</el-button>
+        <el-button type="danger" @click="deleteHandle()" v-if="isAuth('sys:user:delete')" size="small" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
-      <template slot-scope="scope"
-                slot="menu">
-        <el-button type="primary"
-                   icon="el-icon-edit"
-                   size="small"
-                   v-if="isAuth('sys:user:update')"
-                   @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
-
-        <el-button type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   v-if="isAuth('sys:user:delete')"
-                   @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
+      <template slot-scope="scope" slot="menu">
+        <el-button type="primary" icon="el-icon-edit" size="small" v-if="isAuth('sys:user:update')" @click.stop="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="small" v-if="isAuth('sys:user:delete')" @click.stop="deleteHandle(scope.row.userId)">删除</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible"
-                   ref="addOrUpdate"
-                   @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 

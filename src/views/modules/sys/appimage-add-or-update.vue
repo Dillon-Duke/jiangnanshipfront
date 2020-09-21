@@ -4,20 +4,6 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item v-if="!dataForm.id" label="图片缩略" prop="massageName">
-        <el-upload
-          ref="imgUpload"
-          :limit=limitNum
-          :on-exceed="exceedFile"
-          :on-success="onSuccess"
-          :on-remove="handleRemove"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          :action="upLoadUrl"
-          list-type="picture-card"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
-      </el-form-item>
       <el-form-item label="图片名称" prop="customName">
         <el-input v-model="dataForm.customName" placeholder="图片名称"></el-input>
       </el-form-item>
@@ -31,11 +17,9 @@
 
 <script>
   export default {
-    name: 'imgUpload',
     data () {
       return {
         limitNum: 1,
-        upLoadUrl: '/proxyApi/file/upload',
         visible: false,
         dataForm: {
           id: 0,
@@ -46,16 +30,6 @@
       }
     },
     methods: {
-      exceedFile (files, fileList) {
-        this.$notify.warning({
-          title: '警告',
-          message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
-        })
-      },
-      onSuccess (response, file, fileList) {
-        this.dataForm.fileImage = response.filename
-        this.dataForm.sourceImage = response.fdfsUrl
-      },
       init (id) {
         this.dataForm.id = id || 0
         this.visible = true

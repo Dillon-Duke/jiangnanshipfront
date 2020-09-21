@@ -20,6 +20,12 @@
           @change="handleSelectDeptChange">
         </el-cascader>
       </el-form-item>
+      <el-form-item label="驳运部门" prop="deptType">
+        <el-radio-group v-model="dataForm.deptType">
+          <el-radio :label="1" >是</el-radio>
+          <el-radio :label="0" >否</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
@@ -46,6 +52,7 @@
         dataForm: {
           id: 0,
           deptName: '',
+          deptType: '',
           deptCode: '',
           parentId: '',
           remark: ''
@@ -77,6 +84,7 @@
             }).then(({data}) => {
               this.dataForm.id = data.deptId
               this.dataForm.deptName = data.deptName
+              this.dataForm.deptType = data.deptType
               this.dataForm.deptCode = data.deptCode
               this.dataForm.remark = data.remark
               this.selectedDept = idList(this.deptList, data.parentId, 'deptId', 'children').reverse()
@@ -99,6 +107,7 @@
               data: this.$http.adornData({
                 'deptId': this.dataForm.id || undefined,
                 'deptName': this.dataForm.deptName,
+                'deptType': this.dataForm.deptType,
                 'deptCode': this.dataForm.deptCode,
                 'parentId': this.dataForm.parentId,
                 'remark': this.dataForm.remark

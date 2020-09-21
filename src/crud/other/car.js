@@ -5,7 +5,7 @@ export const tableOption = {
   indexLabel: '序号',
   stripe: true,
   menuAlign: 'center',
-  menuWidth: 250,
+  menuWidth: 200,
   align: 'center',
   refreshBtn: true,
   searchSize: 'mini',
@@ -25,11 +25,11 @@ export const tableOption = {
     label: '车辆编号',
     prop: 'carNumber'
   }, {
-    label: '车辆牌照',
-    prop: 'carPlate'
-  }, {
     label: '车辆品牌',
     prop: 'carModel'
+  }, {
+    label: 'Oid编码',
+    prop: 'carOid'
   }, {
     label: '车辆长',
     prop: 'carLength'
@@ -39,12 +39,6 @@ export const tableOption = {
   }, {
     label: '车辆高',
     prop: 'carHeight'
-  }, {
-    label: '车辆图片',
-    prop: 'sourceImage',
-    type: 'upload',
-    width: 100,
-    listType: 'picture-img'
   }, {
     label: '空车重量',
     prop: 'emptyWeight'
@@ -70,5 +64,17 @@ export const tableOption = {
         value: 4
       }
     ]
+  }, {
+    label: '所属部门',
+    prop: 'followDeptName'
   }]
 }
+
+// 显示车辆图片使用
+// {
+//   label: '车辆图片',
+//   prop: 'sourceImage',
+//   type: 'upload',
+//   width: 100,
+//   listType: 'picture-img'
+// },

@@ -15,10 +15,15 @@
           <el-checkbox v-for="dept in deptList" :key="dept.deptId" :label="dept.deptId">{{ dept.deptName }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="权限" size="mini" prop="powerIdList">
-        <el-checkbox-group v-model="dataForm.powerIdList">
-          <el-checkbox v-for="power in powerList" :key="power.confId" :label="power.confId">{{ power.paramKey }}</el-checkbox>
-        </el-checkbox-group>
+      <el-form-item label="角色权限" prop="powerIdList">
+        <el-select v-model="dataForm.powerIdList" filterable multiple placeholder="请选择对应的角色权限" style="width:300px;" >
+          <el-option v-for="item in powerList" :key="item.confId" :label="item.paramKey" :value="item.confId" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="查询权限" prop="queryIdList">
+        <el-select v-model="dataForm.queryIdList" filterable multiple placeholder="请选择对应的查询权限" style="width:300px;" >
+          <el-option v-for="item in queryList" :key="item.id" :label="item.paramKey + '  :  ' + item.paramValue" :value="item.id" />
+        </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -35,16 +40,14 @@
         visible: false,
         deptList: [],
         powerList: [],
-        menuListTreeProps: {
-          label: 'deptName',
-          children: 'children'
-        },
+        queryList: [],
         dataForm: {
           Id: 0,
           roleName: '',
           remark: '',
           deptIdList: [],
           powerIdList: [],
+          queryIdList: [],
           roleDept: ''
         },
         dataRule: {
@@ -64,6 +67,13 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.powerList = data
+        })
+        this.$http({
+          url: this.$http.adornUrl('/dept/query/list'),
+          method: 'post',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.queryList = data
         })
         this.$http({
           url: this.$http.adornUrl('/dept/dept/list'),
@@ -91,6 +101,7 @@
               this.dataForm.remark = data.remark
               this.dataForm.deptIdList = data.deptIdList
               this.dataForm.powerIdList = data.powerIdList
+              this.dataForm.queryIdList = data.queryIdList
             })
           }
         })
@@ -114,7 +125,8 @@
                 'roleDept': this.dataForm.deptIdList[0],
                 'remark': this.dataForm.remark,
                 'deptIdList': this.dataForm.deptIdList,
-                'powerIdList': this.dataForm.powerIdList
+                'powerIdList': this.dataForm.powerIdList,
+                'queryIdList': this.dataForm.queryIdList
               })
             }).then(({data}) => {
               this.$message({
@@ -133,3 +145,9 @@
     }
   }
 </script>
+
+
+// 权限选择列表
+<!-- <el-checkbox-group v-model="dataForm.powerIdList">
+  <el-checkbox v-for="power in powerList" :key="power.confId" :label="power.confId">{{ power.paramKey }}</el-checkbox>
+</el-checkbox-group> -->

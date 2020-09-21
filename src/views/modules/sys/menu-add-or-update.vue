@@ -13,14 +13,7 @@
         <el-input v-model="dataForm.name" :placeholder="dataForm.typeList[dataForm.type] + '名称'"></el-input>
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 0" label="上级菜单">
-        <el-cascader
-          expand-trigger="hover"
-          :options="menuList"
-          :props="menuListTreeProps"
-          change-on-select
-          v-model="selectedMenu"
-          @change="handleSelectMenuChange">
-        </el-cascader>
+        <el-cascader expand-trigger="hover" :options="menuList" :props="menuListTreeProps" change-on-select v-model="selectedMenu" @change="handleSelectMenuChange"></el-cascader>
       </el-form-item>
       <el-form-item v-if="dataForm.type === 1" label="菜单路由" prop="url">
         <el-input v-model="dataForm.url" placeholder="格式如下参考 ：sys/user"></el-input>
@@ -34,17 +27,9 @@
       <el-form-item v-if="dataForm.type !== 2" label="图标" prop="icon">
         <el-row>
           <el-col :span="22">
-            <el-popover
-              ref="iconListPopover"
-              placement="bottom-start"
-              trigger="click"
-              popper-class="mod-menu__icon-popover">
+            <el-popover ref="iconListPopover" placement="bottom-start" trigger="click" popper-class="mod-menu__icon-popover">
               <div class="mod-menu__icon-list">
-                <el-button
-                  v-for="(item, index) in iconList"
-                  :key="index"
-                  @click="iconActiveHandle(item)"
-                  :class="{ 'is-active': item === dataForm.icon }">
+                <el-button v-for="(item, index) in iconList" :key="index" @click="iconActiveHandle(item)" :class="{ 'is-active': item === dataForm.icon }">
                   <icon-svg :name="item"></icon-svg>
                 </el-button>
               </div>
@@ -186,9 +171,7 @@
     }
   }
 </script>
-
 <style lang="scss">
-
   .mod-menu {
     .menu-list__input,
     .icon-list__input {

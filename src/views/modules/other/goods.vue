@@ -11,11 +11,11 @@
         <el-button type="primary"
                    icon="el-icon-plus"
                    size="small"
-                   v-if="isAuth('car:goods:save')"
+                   v-if="isAuth('other:goods:save')"
                    @click.stop="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger"
                    @click="deleteHandle()"
-                   v-if="isAuth('car:goods:delete')"
+                   v-if="isAuth('other:goods:delete')"
                    size="small"
                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </template>
@@ -24,12 +24,12 @@
         <el-button type="primary"
                    icon="el-icon-edit"
                    size="small"
-                   v-if="isAuth('car:goods:update')"
+                   v-if="isAuth('other:goods:update')"
                    @click.stop="addOrUpdateHandle(scope.row.goodsId)">编辑</el-button>
         <el-button type="danger"
                    icon="el-icon-delete"
                    size="small"
-                   v-if="isAuth('car:goods:delete')"
+                   v-if="isAuth('other:goods:delete')"
                    @click.stop="deleteHandle(scope.row)">删除</el-button>
       </template>
     </avue-crud>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { tableOption } from '@/crud/car/goods'
+import { tableOption } from '@/crud/other/goods'
 import AddOrUpdate from './goods-add-or-update'
 export default {
   data () {
@@ -67,7 +67,7 @@ export default {
     getDataList (page, params) {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/car/goods/page'),
+        url: this.$http.adornUrl('/other/goods/page'),
         method: 'post',
         params: this.$http.adornParams(
           Object.assign(
@@ -113,7 +113,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/car/goods/delete'),
+          url: this.$http.adornUrl('/other/goods/delete'),
           method: 'post',
           data: this.$http.adornData(goodsList, false)
         }).then(({ data }) => {

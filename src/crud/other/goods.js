@@ -62,11 +62,17 @@ export const tableOption = {
     prop: 'isOverSize',
     dicData: [
       {
-        label: '是',
+        label: '正常',
+        value: 0
+      }, {
+        label: '超高',
         value: 1
       }, {
-        label: '否',
-        value: 0
+        label: '超宽',
+        value: 2
+      }, {
+        label: '超高宽',
+        value: 3
       }
     ]
   }]
