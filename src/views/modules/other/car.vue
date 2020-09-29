@@ -36,7 +36,7 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible"
                    ref="addOrUpdate"
-                   @refreshDataList="getDataList">
+                   @refreshDataList="getDataList (page, params)">
     </add-or-update>
   </div>
 </template>
@@ -79,6 +79,8 @@ export default {
           )
         )
       }).then(({ data }) => {
+        this.page.currentPage = data.current
+        this.page.pageSize = data.size
         this.dataList = data.records
         this.page.total = data.total
         this.dataListLoading = false

@@ -1,32 +1,14 @@
 <template>
   <div class="mod-role">
-    <avue-crud ref="crud"
-               :page="page"
-               :data="dataList"
-               :option="tableOption"
-               @search-change="searchChange"
-               @selection-change="selectionChange"
-               @on-load="getDataList">
-      <template slot="menuLeft">
-      </template>
-      <template slot-scope="scope"
-                slot="menu">
-      <el-button type="primary"
-                   icon="el-icon-plus"
-                   size="small"
-                   v-if="isAuth('activity:role:save') && scope.row.roleName === null"
-                   @click.stop="addOrUpdateHandle(undefined, scope.row.userRole)">{{'新增角色'}}</el-button>
-        <el-button type="danger"
-                   icon="el-icon-delete"
-                   size="small"
-                   v-if="isAuth('activity:role:update')  && scope.row.roleName !== null"
-                   @click.stop="addOrUpdateHandle(scope.row.id, scope.row.userRole)">{{'修改角色'}}</el-button>
+    <avue-crud ref="crud" :page="page" :data="dataList" :option="tableOption" @search-change="searchChange" @selection-change="selectionChange" @on-load="getDataList">
+      <template slot="menuLeft"></template>
+      <template slot-scope="scope" slot="menu">
+        <el-button type="primary" icon="el-icon-plus" size="small" v-if="isAuth('activity:role:save') && scope.row.roleName === null" @click.stop="addOrUpdateHandle(undefined, scope.row.userRole)">{{'新增角色'}}</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="small" v-if="isAuth('activity:role:update')  && scope.row.roleName !== null" @click.stop="addOrUpdateHandle(scope.row.id, scope.row.userRole)">{{'修改角色'}}</el-button>
       </template>
     </avue-crud>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible"
-                   ref="addOrUpdate"
-                   @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
@@ -68,6 +50,8 @@ export default {
           )
         )
       }).then(({ data }) => {
+        this.page.currentPage = data.current
+        this.page.pageSize = data.size
         this.dataList = data.records
         this.page.total = data.total
         this.dataListLoading = false

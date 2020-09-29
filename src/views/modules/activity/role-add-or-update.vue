@@ -4,13 +4,13 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="130px">
-      <el-form-item label="角色名称" prop="roleName">
+      <el-form-item v-if="dataForm.username !== null" label="角色名称" prop="roleName" >
         <el-select v-model="dataForm.roleName" @change="getUserList(dataForm.roleName)" filterable placeholder="请选择对应的角色" >
           <el-option v-for="item in roleList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
         </el-select>
       </el-form-item>
-      <el-form-item label="用户名称" prop="userNameList">
-        <el-select v-model="dataForm.userNameList"  multiple filterable placeholder="请选择对应的用户">
+      <el-form-item label="用户名称" prop="userNameList" >
+        <el-select v-model="dataForm.userNameList" multiple filterable placeholder="请选择对应的用户">
           <el-option v-for="item in userList" :key="item.userId" :label="item.realName" :value="item.userId" />
         </el-select>
       </el-form-item>

@@ -13,9 +13,12 @@
       <el-form-item label="车辆品牌" prop="carModel">
         <el-input v-model="dataForm.carModel" placeholder="车辆品牌"></el-input>
       </el-form-item>
-      <el-form-item label="车辆类型" prop="carType" >
-        <el-select v-model="dataForm.carType" placeholder="请选择">
-          <el-option v-for="item in carTypeList" :key="item.paramKeys" :label="item.remark + ' : ' + item.paramValue" :value="item.confId" />
+      <el-form-item label="车辆类型" prop="parentType" >
+        <el-select v-model="dataForm.parentType" placeholder="请选择车辆类型" @change="getCarTypeList">
+          <el-option v-for="item in parentTypeList" :key="item.paramKeys" :label="item.paramValue" :value="item.confId" />
+        </el-select>
+        <el-select v-model="dataForm.carType" placeholder="请选择类型详情">
+          <el-option v-for="item in carTypeList" :key="item.paramKeys" :label="item.paramValue" :value="item.confId" />
         </el-select>
       </el-form-item>
       <el-form-item label="Oid编码" prop="carOid">
@@ -51,7 +54,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dataFormCancle()">取消</el-button>
+      <el-button type="primary" @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
@@ -63,6 +66,7 @@
       return {
         limitNum: 3,
         visible: false,
+        parentTypeList: [],
         carTypeList: [],
         deptList: [],
         dataForm: {
@@ -70,6 +74,7 @@
           carName: '',
           carNumber: '',
           carModel: '',
+          parentType: '',
           carType: '',
           carOid: '',
           carLength: '',
@@ -108,7 +113,7 @@
           method: 'post',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.carTypeList = data
+          this.parentTypeList = data
         })
         this.$http({
           url: this.$http.adornUrl('/dept/dept/list'),
@@ -134,6 +139,7 @@
               this.dataForm.carName = data.carName
               this.dataForm.carNumber = data.carNumber
               this.dataForm.carModel = data.carModel
+              this.dataForm.parentType = data.parentType
               this.dataForm.carType = data.carType
               this.dataForm.carOid = data.carOid
               this.dataForm.carLength = data.carLength
@@ -147,8 +153,29 @@
               this.dataForm.followDeptId = data.followDeptId
               this.dataForm.followDeptName = data.followDeptName
               this.dataForm.deptIdList = data.deptIdList
+              this.$http({
+                url: this.$http.adornUrl(`/other/config/platformCarTypeList`),
+                method: 'post',
+                data: this.$http.adornData({
+                  parentId: data.parentType
+                })
+              }).then(({data}) => {
+                this.carTypeList = data
+              })
             })
           }
+        })
+      },
+      // 获得车辆类型详情配置
+      getCarTypeList (confId) {
+        this.$http({
+          url: this.$http.adornUrl(`/other/config/platformCarTypeList`),
+          method: 'post',
+          data: this.$http.adornData({
+            parentId: confId
+          })
+        }).then(({data}) => {
+          this.carTypeList = data
         })
       },
        // 设置单选框
@@ -169,6 +196,7 @@
                 'carName': this.dataForm.carName,
                 'carNumber': this.dataForm.carNumber,
                 'carModel': this.dataForm.carModel,
+                'parentType': this.dataForm.parentType,
                 'carType': this.dataForm.carType,
                 'carOid': this.dataForm.carOid,
                 'carLength': this.dataForm.carLength,

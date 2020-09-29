@@ -5,8 +5,8 @@
   window.SITE_CONFIG = {}
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://test.100mhb.com/back'
-  // window.SITE_CONFIG['baseUrl'] = 'http://129.204.74.133/back'
+  // window.SITE_CONFIG['baseUrl'] = 'http://test.100mhb.com/back'
+  window.SITE_CONFIG['baseUrl'] = 'http://129.204.74.133/back'
 
   // 静态资源文件url
   window.SITE_CONFIG['resourcesUrl'] = ''

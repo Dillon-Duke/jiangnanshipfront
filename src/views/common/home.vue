@@ -41,7 +41,7 @@
           </div>
         </div>
         <div class="panel-curvedtable">
-           <div id="chartOne" style="width: 100%;height: 100%;"></div>
+          <div id="chartOne" style="width: 100%;height: 100%;" />
           <div class="panel-footer" />
         </div>
       </div>
@@ -51,9 +51,10 @@
           <div class="panel-footer"></div>
         </div>
         <div class="panel">
+          <div>ahgfiuadhguagdhug
+          </div>
           <div class="panel-footer" />
         </div>
-        
       </div>
     </section>
   </div>
@@ -87,6 +88,7 @@
       }
     },
     methods: {
+      // 获得对应的当天申请节点数量
       getChartOne () {
         // 基于准备好的dom，初始化echarts实例
         let myChartOne = this.$echarts.init(document.getElementById('chartOne'))
@@ -110,6 +112,7 @@
           })
         })
       },
+      // 获取车辆的类型详情数量
       getChartPie () {
         // 基于准备好的dom，初始化echarts实例
         let myChartPie = this.$echarts.init(document.getElementById('chartPie'))
@@ -130,6 +133,7 @@
           })
         })
       },
+      // 获取每种车辆类型的总数以及正常使用数量
       getTypeCarNumber () {
         this.$http({
           url: this.$http.adornUrl('/home/getTypeCarTaskCount'),
@@ -150,6 +154,10 @@
       },
       currentTime () {
         setInterval(this.getDate, 500)
+      },
+      // 日历框
+      getCanditai () {
+        document.getElementById('#inputTest')
       },
       getDate: function () {
         var _this = this
@@ -342,6 +350,11 @@ header {
     }
   }
   .panel-curvedtable {
+    .calender {
+      position: absolute;
+      top: 35px;
+      right: 0;
+    }
     position: relative;
     width: 100%;
     height: 400px;
@@ -355,18 +368,18 @@ header {
       border-left: 2px solid rgb(255, 243, 133);
       border-top: 2px solid rgb(255, 243, 133);
       content: "";
-      }
-      &::after {
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 10px;
-        height: 10px;
-        border-right: 2px solid rgb(255, 243, 133);
-        border-top: 2px solid rgb(255, 243, 133);
-        content: "";
-      }
-      .panel-footer {
+    }
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid rgb(255, 243, 133);
+      border-top: 2px solid rgb(255, 243, 133);
+      content: "";
+    }
+    .panel-footer {
       position: absolute;
       bottom: 0;
       left: 0;
@@ -380,18 +393,18 @@ header {
       border-left: 2px solid rgb(255, 243, 133);
       border-bottom: 2px solid rgb(255, 243, 133);
       content: "";
+    }
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid rgb(255, 243, 133);
+      border-bottom: 2px solid rgb(255, 243, 133);
+      content: "";
       }
-      &::after {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 10px;
-        height: 10px;
-        border-right: 2px solid rgb(255, 243, 133);
-        border-bottom: 2px solid rgb(255, 243, 133);
-        content: "";
-        }
-      }
+    }
   }
 }
 </style>

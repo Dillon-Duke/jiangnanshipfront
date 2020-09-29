@@ -5,7 +5,7 @@ export const tableOption = {
   indexLabel: '序号',
   stripe: true,
   menuAlign: 'center',
-  menuWidth: 350,
+  menuWidth: 250,
   align: 'center',
   refreshBtn: true,
   searchSize: 'mini',
@@ -19,8 +19,7 @@ export const tableOption = {
   },
   column: [{
     label: '参数类型',
-    prop: 'paramKey',
-    search: true
+    prop: 'parentName'
   }, {
     label: '参数值',
     prop: 'paramValue'

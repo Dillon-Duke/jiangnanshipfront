@@ -2,49 +2,31 @@
   <div class="login">
     <div class="login-box">
       <div class="top">
-        <div class="logo"><img src="~@/assets/img/loginLOGO.jpg"
-               alt=""></div>
+        <div class="logo"><img src="~@/assets/png/loginLOGO.png" alt=""></div>
       </div>
       <div class="mid">
-        <el-form :model="dataForm"
-                 :rules="dataRule"
-                 ref="dataForm"
-                 @keyup.enter.native="dataFormSubmit()"
-                 status-icon>
+        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
           <el-form-item prop="userName">
-            <el-input class="info"
-                      v-model="dataForm.userName"
-                      placeholder="帐号"></el-input>
+            <el-input class="info" v-model="dataForm.userName" placeholder="帐号"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input class="info"
-                      v-model="dataForm.password"
-                      type="password"
-                      placeholder="密码"></el-input>
+            <el-input class="info" v-model="dataForm.password" type="password" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item prop="captcha">
             <el-row :gutter="20">
               <el-col :span="14">
-                <el-input v-model="dataForm.captcha"
-                          placeholder="验证码">
-                </el-input>
+                <el-input v-model="dataForm.captcha" placeholder="验证码" />
               </el-col>
-              <el-col :span="10"
-                      class="login-captcha">
-                <img :src="captchaPath"
-                     @click="getCaptcha()"
-                     alt="">
+              <el-col :span="10" class="login-captcha">
+                <img :src="captchaPath" @click="getCaptcha()" alt="">
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item>
-            <div class="item-btn"><input type="button"
-                     value="登录"
-                     @click="dataFormSubmit()"></div>
+            <div class="item-btn"><input type="button" value="登录" @click="dataFormSubmit()"></div>
           </el-form-item>
         </el-form>
       </div>
-
       <div class="bottom">Copyright © 2020 上海菜道信息科技有限公司 </div>
     </div>
   </div>
@@ -114,7 +96,7 @@ export default {
 .login {
   width: 100%;
   height: 100%;
-  background: url(~@/assets/img/login-bg.png) no-repeat;
+  background: url(~@/assets/png/login-bg.png) no-repeat;
   background-size: cover;
   position: fixed;
 }
